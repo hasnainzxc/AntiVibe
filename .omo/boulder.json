@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "active_work_id": "antivibe-saas-e9de2810",
+  "works": {
+    "antivibe-saas-e9de2810": {
+      "work_id": "antivibe-saas-e9de2810",
+      "active_plan": "/home/hairzee/prods/AntiVibe/.omo/plans/antivibe-saas.md",
+      "plan_name": "antivibe-saas",
+      "status": "active",
+      "started_at": "2026-07-04T06:38:31.673Z",
+      "updated_at": "2026-07-04T07:46:07.218Z",
+      "session_ids": [
+        "opencode:ses_0d46a7e80ffedeo6MNtmDLyf2v",
+        "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt"
+      ],
+      "session_origins": {
+        "opencode:ses_0d46a7e80ffedeo6MNtmDLyf2v": "direct",
+        "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt": "appended"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "final-wave:f1": {
+          "task_key": "final-wave:f1",
+          "task_label": "F1",
+          "task_title": "**Plan Compliance Audit** — `oracle`",
+          "session_id": "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt",
+          "agent": "general",
+          "started_at": "2026-07-04T07:42:15.944Z",
+          "status": "running",
+          "updated_at": "2026-07-04T07:46:07.218Z"
+        }
+      }
+    }
+  },
+  "active_plan": "/home/hairzee/prods/AntiVibe/.omo/plans/antivibe-saas.md",
+  "started_at": "2026-07-04T06:38:31.673Z",
+  "status": "active",
+  "updated_at": "2026-07-04T07:46:07.218Z",
+  "session_ids": [
+    "opencode:ses_0d46a7e80ffedeo6MNtmDLyf2v",
+    "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt"
+  ],
+  "session_origins": {
+    "opencode:ses_0d46a7e80ffedeo6MNtmDLyf2v": "direct",
+    "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt": "appended"
+  },
+  "plan_name": "antivibe-saas",
+  "task_sessions": {
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "opencode:ses_0d3e879a1ffePQ8zDdB8EHnlOt",
+      "agent": "general",
+      "started_at": "2026-07-04T07:42:15.944Z",
+      "status": "running",
+      "updated_at": "2026-07-04T07:46:07.218Z"
+    }
+  },
+  "agent": "atlas"
+}

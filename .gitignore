@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build
+.next/
+dist/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMO
+.omo/evidence/
+.omo/drafts/
+
+# Test
+playwright-report/
+coverage/
+.pytest_cache/
+
+# Supabase
+supabase/.temp/

@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+        python-version: ['3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Python dependencies
+        run: cd services/sandbox-svc && pip install -r requirements.txt
+
+      - name: Lint (ESLint + Prettier + Ruff)
+        run: |
+          pnpm exec eslint . --max-warnings 0 || echo "ESLint warnings found (non-blocking for scaffold)"
+          pnpm exec prettier --check . --ignore-path .gitignore || echo "Prettier warnings (non-blocking)"
+          cd services/sandbox-svc && ruff check . || echo "Ruff warnings (non-blocking)"
+
+      - name: Test (Vitest + Pytest)
+        run: |
+          pnpm -r test --passWithNoTests
+          cd services/sandbox-svc && python -m pytest tests/ -v
+
+      - name: Build
+        run: pnpm -r build
