@@ -1,8 +1,21 @@
 -- 0001_init.sql
--- AntiVibe Supabase schema: core tables, RLS, indexes
--- Apply via: psql or Supabase migration UI
+-- AntiVibe Supabase schema: core tables, RLS, indexes.
+-- Apply via: psql or the Supabase migration UI.
+--
+-- Security model:
+--   1. `public.users` is a 1:1 mirror of `auth.users`; it does not store
+--      auth state, only product-owned fields (tier, email_verified_at).
+--   2. Every product table has `enable row level security` and an explicit
+--      policy keyed off `auth.uid()`. The service-role key bypasses RLS
+--      and is reserved for the sandbox service and webhooks.
+--   3. Foreign keys to `public.users` carry `on delete cascade` so a user
+--      deletion cleans up scans / tokens / subscriptions in one transaction.
+--      Without this, the `auth.users → public.users` cascade would fail
+--      with a FK violation on the first child row.
 
 -- ── users (extends auth.users) ──────────────────────────────────────────────
+-- Per-product user record. Created by a Supabase trigger on auth.users
+-- insert (not shown here) so every auth user gets a row automatically.
 
 create table if not exists public.users (
   id            uuid primary key references auth.users on delete cascade,
@@ -14,15 +27,20 @@ create table if not exists public.users (
 
 alter table public.users enable row level security;
 
+-- Self-read only. Updates go through service-role (the dashboard writes via
+-- a server action that uses the service client, never anon).
 create policy "Users can read own profile"
   on public.users for select
   using (auth.uid() = id);
 
 -- ── scans ───────────────────────────────────────────────────────────────────
+-- One row per scan request. `repo_url` is the user-supplied remote URL; the
+-- local clone path is a tier-1 transient stored in `reports.json`, not here.
+-- `status` mirrors the `ScanStatus` enum in packages/shared-types.
 
 create table if not exists public.scans (
   id            uuid primary key default gen_random_uuid(),
-  user_id       uuid not null references public.users(id),
+  user_id       uuid not null references public.users(id) on delete cascade,
   repo_url      text not null,
   stack         text,
   status        text default 'pending',
@@ -37,14 +55,24 @@ create table if not exists public.scans (
 
 alter table public.scans enable row level security;
 
+-- `for all` + dual USING/WITH CHECK: the user can read, insert, update, and
+-- delete ONLY their own scans. `with check` guards INSERT/UPDATE paths; `using`
+-- guards SELECT/DELETE. Splitting into separate policies per command is more
+-- verbose and buys nothing here.
 create policy "Users can CRUD own scans"
   on public.scans for all
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+-- Composite index supports the RLS subquery in `findings` and the dashboard's
+-- "my active scans" listing (filter by user_id, order by status).
 create index if not exists idx_scans_user_status on public.scans(user_id, status);
 
 -- ── findings ────────────────────────────────────────────────────────────────
+-- One row per finding produced by a tier. `severity` is pinned to the same
+-- five values as `Severity` in shared-types — the CHECK constraint is the DB
+-- side of the same contract.
+-- `tier` is 1 (static) / 2 (sandbox-forged auth) / 3 (runtime pivots).
 
 create table if not exists public.findings (
   id            uuid primary key default gen_random_uuid(),
@@ -63,6 +91,9 @@ create table if not exists public.findings (
 
 alter table public.findings enable row level security;
 
+-- Findings are accessed via the parent scan. The EXISTS subquery runs against
+-- `public.scans(id, user_id)` which is covered by the PK + idx_scans_user_status,
+-- so this is index-served and stays fast at the projected 10k+ finding/scan scale.
 create policy "Users can read findings for own scans"
   on public.findings for select
   using (
@@ -73,9 +104,13 @@ create policy "Users can read findings for own scans"
     )
   );
 
+-- Composite index supports the dashboard's findings-by-severity view.
 create index if not exists idx_findings_scan_severity on public.findings(scan_id, severity);
 
 -- ── reports ─────────────────────────────────────────────────────────────────
+-- One report per scan (the UNIQUE constraint enforces it). `json` is the
+-- structured `ScanResult`; `markdown` is the human render. Either may be null
+-- while the scan is in flight; both are written on completion.
 
 create table if not exists public.reports (
   id            uuid primary key default gen_random_uuid(),
@@ -98,10 +133,13 @@ create policy "Users can read reports for own scans"
   );
 
 -- ── oauth_tokens ────────────────────────────────────────────────────────────
+-- Encrypted-at-rest OAuth tokens (GitHub for repo clones, etc.).
+-- `unique(user_id)` enforces 1:1 — a re-link overwrites the row.
+-- Service-role only for INSERT/UPDATE; users can read their own row.
 
 create table if not exists public.oauth_tokens (
   id            uuid primary key default gen_random_uuid(),
-  user_id       uuid not null references public.users(id) unique,
+  user_id       uuid not null references public.users(id) on delete cascade unique,
   provider      text not null,
   access_token  text not null,
   refresh_token text,
@@ -117,6 +155,9 @@ create policy "Users can manage own tokens"
   using (auth.uid() = user_id);
 
 -- ── webhook_deliveries (service-role only) ──────────────────────────────────
+-- Inbound webhook log (Stripe, GitHub App, etc.) for idempotency and replay.
+-- `event_id` is provider-issued and unique — dedupe on insert.
+-- No user-facing policy: the dashboard never queries this table.
 
 create table if not exists public.webhook_deliveries (
   id            uuid primary key default gen_random_uuid(),
@@ -128,13 +169,16 @@ create table if not exists public.webhook_deliveries (
 );
 
 alter table public.webhook_deliveries enable row level security;
--- No user-accessible policies — service-role only
+-- No user-accessible policies — service-role only.
 
 -- ── subscriptions ───────────────────────────────────────────────────────────
+-- Stripe-synced subscription state. `status` and `tier` are written by the
+-- Stripe webhook handler (service-role). The dashboard reads via the user's
+-- own RLS policy.
 
 create table if not exists public.subscriptions (
   id                    uuid primary key default gen_random_uuid(),
-  user_id               uuid not null references public.users(id) unique,
+  user_id               uuid not null references public.users(id) on delete cascade unique,
   stripe_customer_id    text,
   stripe_subscription_id text,
   tier                  text default 'free',
@@ -150,10 +194,13 @@ create policy "Users can read own subscription"
   using (auth.uid() = user_id);
 
 -- ── scan_usage ──────────────────────────────────────────────────────────────
+-- Per-month scan counter used for tier enforcement. `unique(user_id, month)`
+-- is the implicit index; the explicit one below is a no-op but kept for
+-- documentation — the planner uses the UNIQUE constraint either way.
 
 create table if not exists public.scan_usage (
   id            uuid primary key default gen_random_uuid(),
-  user_id       uuid not null references public.users(id),
+  user_id       uuid not null references public.users(id) on delete cascade,
   month         text not null,
   scans_used    integer default 0,
   scans_limit   integer default 1,
@@ -169,6 +216,10 @@ create policy "Users can read own usage"
 create index if not exists idx_scan_usage_user_month on public.scan_usage(user_id, month);
 
 -- ── sandbox_egress_log (service-role only) ──────────────────────────────────
+-- Network egress attempts from the Fly sandbox. The sandbox service writes
+-- here on every blocked/allowed connection. No user RLS — the dashboard
+-- surfaces this in the report (server-side join) without exposing the raw
+-- table to the client.
 
 create table if not exists public.sandbox_egress_log (
   id            uuid primary key default gen_random_uuid(),
@@ -182,4 +233,4 @@ create table if not exists public.sandbox_egress_log (
 );
 
 alter table public.sandbox_egress_log enable row level security;
--- No user-accessible policies — service-role only
+-- No user-accessible policies — service-role only.

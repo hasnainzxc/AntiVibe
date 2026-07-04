@@ -40,22 +40,23 @@
 
 ## Current Sprint
 
-**Active sprint**: Sprint 0 — Pre-build (documentation + planning phase)
-**Start**: 2026-07-04
-**End**: ongoing (no fixed end; segues into Wave 1 once /start-work is invoked)
+**Active sprint**: Sprint 2 — Wave 2 Complete / Wave 3 (Tier 2 Sandbox) in progress
+**Start**: 2026-07-04 (same day, but a lot has happened)
+**End**: ongoing
 
 **Sprint goals**:
-- [x] Plan generation (`.omo/plans/antivibe-saas.md`) — in progress
-- [x] Doc suite scaffolding (`/docs/*.md`) — in progress
-- [ ] Per-feature docs (`/docs/features/*.md`) — pending
-- [ ] Repo scaffold via Task 1 (Wave 1)
-- [ ] Supabase project created via Task 3
-- [ ] Fly Machines client via Task 5
+- [x] Plan generation (`.omo/plans/antivibe-saas.md`) — complete
+- [x] Doc suite scaffolding (`/docs/*.md`) — complete
+- [x] Per-feature docs (`/docs/features/*.md`) — complete
+- [x] Repo scaffold via Task 1 (Wave 1) — complete
+- [x] Supabase project created via Task 3 — complete (migration exists, not deployed)
+- [x] Fly Machines client via Task 5 — complete
 
 **Progress markers**:
-- Plan draft: complete in `.omo/drafts/antivibe-saas.md`
-- Plan file: in progress at `.omo/plans/antivibe-saas.md` (~14 of 50 tasks written)
-- Topical docs (architecture/system-design/etc.): being created THIS sprint
+- Waves 1+2 complete: Tasks 1-15 done, committed c08b2df
+- Wave 3 in progress: Tasks 16-20 done (committed b784d88), Task 21 running, Task 22 pending
+- 124 tests passing (unit + integration)
+- Timeline: slightly ahead of schedule (W1-W4 content done in 1 day!)
 
 ## Done Definition (per sprint)
 
