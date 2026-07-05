@@ -21,7 +21,7 @@ Developers ship at vibe-coding speed. Firestore rules are left open, JWTs are un
 |------|-------------|---------|
 | **1 — Static Engine** | AST parsing + regex secret detection + entropy analysis + LLM semantic review. Catches hardcoded keys, open Firestore rules, CORS wildcards, missing security headers. | < 5 min |
 | **2 — Ephemeral Sandbox** | Spins up the app in a Fly Machine microVM with iptables egress DENY ALL. Seeds mock DBs, forges JWT tokens for cross-tenant users, builds a route index. | < 5 min |
-| **3 — Fuzz Agent** | Walks every route, swaps tenant IDs, rotates HTTP methods, cycles forged tokens. No-stop pivot: 403 → adjacent path, POST → GET, token A → token B. | < 15 min |
+| **3 — Fuzz Agent** | Phase 2: embeds [Strix](https://github.com/usestrix/strix) (Apache-2.0) for full OWASP Top 10 fuzzing — 23 vuln classes including BOLA/IDOR, SQLi, SSRF, SSTI, XSS, CSRF, mass assignment, race conditions. | < 15 min |
 
 ---
 
@@ -38,13 +38,15 @@ AntiVibe/
 │   └── src/index.ts          # Scan, Finding, Report, RouteShape, AuthStack
 ├── services/sandbox-svc/     # Python sandbox service — all scanner logic
 │   ├── scanner/              # Tier 1: clone, detect, AST, secret, config, LLM
-│   ├── sandbox/              # Tier 2-3: containerize, seed, spin, forge, fuzz
+│   ├── sandbox/              # Tier 2: containerize, seed, spin, forge, fuzz
 │   ├── fly/                  # Fly Machines async REST client
 │   ├── storage/              # Supabase Storage (service-role, RLS bypass)
-│   └── tests/                # 220 tests across scanner/ + sandbox/ + fly/
+│   └── tests/                # 415 tests across scanner/ + sandbox/ + fly/
 ├── migrations/0001_init.sql  # Supabase schema (9 tables, RLS, CASCADE)
+├── fixtures/                 # Test repos: vuln-nextjs, vuln-express, clean-app
+├── scripts/                  # Setup scripts: supabase, verify-rls, generate-fixtures
+├── .github/workflows/        # CI (parallel jobs) + staging deploy + prod deploy w/ rollback
 ├── docs/                     # Architecture, system design, sprint goals, per-module specs
-├── .github/workflows/        # CI (lint + test + build) + E2E (manual dispatch)
 └── pnpm-workspace.yaml
 ```
 
@@ -125,20 +127,20 @@ print(f"Findings: {len(result['findings'])}")
 ## Testing
 
 ```
-220 Python tests (pytest)  │  19 TypeScript tests (vitest)  │  Build (tsc)
-───────────────────────────┼────────────────────────────────┼────────────
-scanner/       105 tests   │  dashboard/        12 tests    │  dashboard ✓
-sandbox/       115 tests   │  shared-types/     7  tests   │  shared-types ✓
+415 Python tests (pytest)    │  12 TypeScript tests (vitest)  │  Build (tsc)
+─────────────────────────────┼────────────────────────────────┼────────────
+scanner/       105 tests     │  dashboard/        12 tests    │  dashboard ✓
+sandbox/       310 tests     │  shared-types/     0  tests    │  shared-types ✓
                                                                         
-Total: 239 tests, all passing                                          
+Total: 427 tests, all passing                                          
 ```
 
 ```bash
 # Python
-cd services/sandbox-svc && python -m pytest tests/ -v
+cd services/sandbox-svc && python -m pytest tests/ -v   # 415 tests
 
 # TypeScript
-pnpm -r test -- --reporter=verbose
+pnpm -r test -- --reporter=verbose                        # 12 tests
 
 # Full CI pipeline
 pnpm -r build && pnpm -r test && cd services/sandbox-svc && python -m pytest tests/ -v
@@ -262,31 +264,38 @@ Full documentation lives in `docs/`:
 
 ---
 
-## Guardrails
+### Guardrails
 
-- **Cost**: $0.50/scan cap, 10min circuit-breaker
+- **Cost**: $0.50/scan cap, 10min circuit-breaker, 30min Strix wall-clock timeout
 - **Sandbox egress**: DENY ALL except localhost, audit-logged
+- **Strix worker egress**: ALLOW Anthropic API + target only (all other blocked)
 - **Clone safety**: shallow `--depth 1`, no LFS, 500MB cap, postinstall blocked
 - **Auto-PR**: never auto-merged — human review mandatory
-- **Secrets**: stripped from LLM input before API call
+- **Secrets**: stripped from LLM input before API call; Strix PoCs encrypted at rest
 - **Rate limit**: 1 scan/hour/IP on free tier
+- **Strix**: v1 standard mode only (not deep); single Anthropic model; version pinned; Apache-2.0 NOTICE
 
 ---
 
 ## Progress
 
-| Wave | Progress | Tests |
-|------|----------|-------|
-| 1 — Infra | 8/8 ✅ | — |
-| 2 — Tier 1 Static Engine | 7/7 ✅ | — |
-| 3 — Tier 2 Sandbox | 7/7 ✅ | — |
-| 4 — Tier 3 Fuzz Agent | 0/7 | — |
-| 5 — Reports + GitHub | 0/8 | — |
-| 6 — Billing | 0/7 | — |
-| 7 — Fixtures + Demo | 0/6 | — |
-| FINAL — Review | 0/4 | — |
+**Plan**: `.omo/plans/antivibe-mvp-and-strix.md` — 22 tasks, 2 phases
 
-**22/50 implementation tasks complete (44%). 4 git commits. 239 total tests.**
+| Phase | Tasks | Status |
+|-------|-------|--------|
+| 1 — MVP Deploy | T1-T9 | **8/9 done** (T8 blocked on infra) |
+| 2 — Strix Integration | T10-T22 | GATED (requires Phase 1 polished) |
+| FINAL — Review | F1-F4 | Pending |
+
+**Tasks complete**: T1 (Supabase setup), T2 (Fly.io config), T3 (Anthropic key), T4 (sandbox-svc deploy prep), T5 (E2E pipeline), T6 (Dashboard views), T7 (Circuit-breaker + cost tracking), T9 (Landing page + Stripe)
+
+**427 tests (415 Python + 12 TypeScript), 14 git commits. Pushed to [hasnainzxc/AntiVibe](https://github.com/hasnainzxc/AntiVibe).**
+
+### To Deploy
+1. Provision Supabase + Fly.io + Anthropic accounts
+2. `fly deploy` dashboard + sandbox-svc
+3. Run `scripts/supabase-setup.sh` + `scripts/verify-supabase-rls.sh`
+4. Scan 3 fixture repos in `fixtures/`
 
 ---
 

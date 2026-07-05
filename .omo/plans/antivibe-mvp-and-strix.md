@@ -797,7 +797,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 9. Landing page + Stripe checkout ($29/mo)
+- [x] 9. Landing page + Stripe checkout ($29/mo)
 
   **What to do**:
   - Build landing page: hero ("Paste a GitHub URL. Get a security report."), how it works (3 tiers visual), pricing card
@@ -883,7 +883,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 ## PHASE 2 — Strix Integration (GATED — DO NOT START until Phase 1 complete)
 ---
 
-- [ ] 10. Provision Strix worker Fly Machine (Docker-enabled, 2GB+ RAM)
+- [~] 10. Provision Strix worker Fly Machine (Docker-enabled, 2GB+ RAM)
 
   **What to do**:
   - Create new Fly Machine type: `strix-worker` (separate from sandbox-svc)
@@ -937,7 +937,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 11. Install strix-agent + pre-pull Docker image
+- [~] 11. Install strix-agent + pre-pull Docker image
 
   **What to do**:
   - `pip install strix-agent==<VERSION>` (pin exact version)
@@ -990,7 +990,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 12. Worker egress allowlist + network rules
+- [~] 12. Worker egress allowlist + network rules
 
   **What to do**:
   - Configure worker egress: ALLOW Anthropic API (`api.anthropic.com:443`) + target app domain only
@@ -1044,7 +1044,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 13. StrixAdapter: subprocess wrapper + exit code handling
+- [~] 13. StrixAdapter: subprocess wrapper + exit code handling
 
   **What to do**:
   - Create `services/sandbox-svc/sandbox/strix_adapter.py`
@@ -1134,7 +1134,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 14. Strix findings parser (vulnerabilities.json → AntiVibe schema)
+- [~] 14. Strix findings parser (vulnerabilities.json → AntiVibe schema)
 
   **What to do**:
   - Create `services/sandbox-svc/sandbox/strix_parser.py`
@@ -1215,7 +1215,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 15. PoC script encryption + secure storage
+- [~] 15. PoC script encryption + secure storage
 
   **What to do**:
   - Encrypt `poc_script_code` field from Strix findings using AES-256-GCM
@@ -1288,7 +1288,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 16. Finding merge + dedup (Strix + Tier 1)
+- [~] 16. Finding merge + dedup (Strix + Tier 1)
 
   **What to do**:
   - Create merge logic: combine Tier 1 findings + Strix findings into single list
@@ -1355,7 +1355,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 17. Updated report generator (Strix findings w/ source tag)
+- [~] 17. Updated report generator (Strix findings w/ source tag)
 
   **What to do**:
   - Extend existing report generator to handle merged findings from both sources
@@ -1412,7 +1412,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 18. Updated auto-PR writer (Strix code_locations)
+- [~] 18. Updated auto-PR writer (Strix code_locations)
 
   **What to do**:
   - Extend auto-PR writer to include Strix `code_locations` with fix_before/fix_after
@@ -1472,7 +1472,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 19. Dashboard: findings source badges (antivibe vs strix)
+- [~] 19. Dashboard: findings source badges (antivibe vs strix)
 
   **What to do**:
   - Add `source` badge to finding cards in dashboard: `[antivibe]` (blue) vs `[strix]` (purple)
@@ -1552,7 +1552,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 20. End-to-end Strix scan integration svc
+- [~] 20. End-to-end Strix scan integration svc
 
   **What to do**:
   - Wire everything together: scan orchestrator → Tier 1 → Tier 2 → Strix Adapter → parser → merge → report → PR
@@ -1621,7 +1621,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 21. Strix worker cleanup (purge, watchdog, prune)
+- [~] 21. Strix worker cleanup (purge, watchdog, prune)
 
   **What to do**:
   - After each scan: `rm -rf /tmp/antivibe-strix/{scan_id}/`
@@ -1687,7 +1687,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 22. Benchmark + FP validation on fixture repos
+- [~] 22. Benchmark + FP validation on fixture repos
 
   **What to do**:
   - Run 5+ fixture repo scans through full Strix pipeline
