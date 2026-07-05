@@ -368,7 +368,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 3. Provision Anthropic API key + wire to sandbox-svc
+- [x] 3. Provision Anthropic API key + wire to sandbox-svc
 
   **What to do**:
   - Create Anthropic API key at console.anthropic.com
@@ -431,7 +431,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 4. Deploy sandbox-svc worker to Fly.io
+- [x] 4. Deploy sandbox-svc worker to Fly.io
 
   **What to do**:
   - Create `fly.toml` for sandbox-svc (Python, internal-only)
@@ -490,7 +490,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 5. Wire end-to-end scan pipeline (GitHub URL → Tier 1 → Tier 2 → report)
+- [x] 5. Wire end-to-end scan pipeline (GitHub URL → Tier 1 → Tier 2 → report)
 
   **What to do**:
   - Create scan orchestrator endpoint: accepts GitHub URL → triggers clone → runs Tier 1 → runs Tier 2 → aggregates findings → saves to Supabase
@@ -573,7 +573,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 6. Dashboard: scan list + finding detail views
+- [x] 6. Dashboard: scan list + finding detail views
 
   **What to do**:
   - Build scan list page: shows all user's scans with status, repo name, finding count, timestamp
@@ -654,7 +654,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 7. Circuit-breaker validation + cost tracking
+- [x] 7. Circuit-breaker validation + cost tracking
 
   **What to do**:
   - Test circuit-breaker triggers correctly: $0.50 cap, 10min timeout, 100K token limit
@@ -719,7 +719,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 8. Real scan testing (3 repos, verify findings)
+- [~] 8. Real scan testing (3 repos, verify findings)
 
   **What to do**:
   - Scan 3 real public repos that are known to have security issues:
