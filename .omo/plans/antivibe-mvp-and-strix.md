@@ -1758,19 +1758,19 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 > **Do NOT auto-proceed after verification. Wait for user's explicit approval before marking work complete.**
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [~] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists. For each "Must NOT Have": search codebase for forbidden patterns. Check evidence files exist in .omo/evidence/. Verify Phase Gate conditions met before Phase 2 tasks started.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | Phase Gate [PASS/FAIL] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [~] F2. **Code Quality Review** — `unspecified-high`
   Run `python -m pytest tests/ -v` + `pnpm -r test`. Review all changed files for: empty catches, console.log, commented-out code, unused imports. Check AI slop. Verify NOTICE file present. Verify `strix-agent` version pinned.
   Output: `Build [PASS/FAIL] | Tests [N pass/N fail] | Files [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
+- [~] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
   Start from clean state. Execute EVERY QA scenario from EVERY task — follow exact steps, capture evidence. Test cross-task integration. Test: Phase 1 pipeline → Phase 2 Strix pipeline → dashboard → report → PR flow. Test graceful degradation (Strix down → Tier 1 still works).
   Output: `Scenarios [N/N pass] | Integration [N/N] | Edge Cases [N tested] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [~] F4. **Scope Fidelity Check** — `deep`
   For each task: read "What to do", read actual diff. Verify 1:1 — everything in spec was built, nothing beyond spec. Check "Must NOT do" compliance. Verify Phase Gate was enforced (check git log — Phase 2 tasks started AFTER Phase 1 complete).
   Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Phase Gate Enforced [YES/NO] | VERDICT`
 
