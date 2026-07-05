@@ -257,6 +257,13 @@ async def run_tier1(
     result["findings"] = [_finding_to_dict(f) for f in all_findings]
     result["duration_ms"] = int((time.time() - start_time) * 1000)
 
+    if llm_result and not llm_result.unverified:
+        result["llm_usage"] = {
+            "tokens_in": llm_result.tokens_in,
+            "tokens_out": llm_result.tokens_out,
+            "cost_cents": llm_result.cost_cents,
+        }
+
     # Promote to "partial" if any analyzer failed. The LLM also
     # counts as a partial failure when it returned unverified —
     # i.e. we reached it but the model gave us nothing usable,
