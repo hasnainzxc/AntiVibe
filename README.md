@@ -190,6 +190,53 @@ This script runs 3 curl-based tests against the Supabase REST API:
 2. Service-role insert — expects 201 Created
 3. Anon user trying to read another user's scan — expects empty array (RLS blocks it)
 
+### Deploy Dashboard to Fly.io
+
+AntiVibe's dashboard is deployed to [Fly.io](https://fly.io) as a standalone Next.js app.
+
+#### Prerequisites
+
+1. Install the Fly CLI:
+   ```bash
+   curl -L https://fly.io/install.sh | sh
+   export FLYCTL_INSTALL="$HOME/.fly"
+   export PATH="$FLYCTL_INSTALL/bin:$PATH"
+   ```
+2. Sign up / log in:
+   ```bash
+   flyctl auth signup  # Create a Fly.io account (free tier available)
+   # or
+   flyctl auth login   # Log in to existing account
+   ```
+
+#### Deploy
+
+```bash
+# From the repo root
+flyctl launch --from-file apps/dashboard/fly.toml --no-deploy
+
+# Set secrets (use your Supabase project values)
+flyctl secrets set \
+  SUPABASE_URL="https://<ref>.supabase.co" \
+  SUPABASE_ANON_KEY="<your-anon-key>" \
+  SUPABASE_SERVICE_ROLE_KEY="<your-service-role-key>" \
+  NODE_ENV="production"
+
+# Deploy
+flyctl deploy --config apps/dashboard/fly.toml
+
+# Open in browser
+flyctl open
+```
+
+> **Note**: The Fly app name `antivibe-dashboard` must be globally unique. If taken, change the `app` field in `apps/dashboard/fly.toml`.
+
+#### Dashboard URL
+
+Once deployed, the dashboard is available at `https://antivibe-dashboard.fly.dev`.
+
+---
+
 ### Storage Buckets
 
 After schema setup, create these private buckets in **Supabase Dashboard → Storage**:
