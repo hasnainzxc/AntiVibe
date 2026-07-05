@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@antivibe/shared-types": "workspace:*",
     "@base-ui/react": "^1.6.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.0",
