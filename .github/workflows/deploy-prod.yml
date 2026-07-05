@@ -1,0 +1,140 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deploy target"
+        required: true
+        type: choice
+        default: production
+        options:
+          - production
+          - staging
+      skip_tests:
+        description: "Skip CI (emergency hotfix only)"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+jobs:
+  ci-check:
+    name: CI Gate
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip_tests }}
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: runs } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+            });
+            const failed = runs.check_runs.filter(r => r.conclusion === 'failure');
+            if (failed.length > 0) {
+              core.setFailed(`Blocked by ${failed.length} failed check(s): ${failed.map(r => r.name).join(', ')}`);
+            }
+
+  deploy-dashboard:
+    name: Deploy Dashboard to ${{ github.event.inputs.environment || 'production' }}
+    runs-on: ubuntu-latest
+    needs: [ci-check]
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Determine Fly.io app name
+        id: app-name
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "app=antivibe-dashboard-staging" >> $GITHUB_OUTPUT
+          else
+            echo "app=antivibe-dashboard-prod" >> $GITHUB_OUTPUT
+          fi
+      - name: Deploy dashboard
+        id: deploy
+        run: |
+          flyctl deploy apps/dashboard --app ${{ steps.app-name.outputs.app }} --remote-only --strategy immediate
+          echo "url=https://${{ steps.app-name.outputs.app }}.fly.dev" >> $GITHUB_OUTPUT
+      - name: Health check
+        id: health
+        run: |
+          URL="https://${{ steps.app-name.outputs.app }}.fly.dev/api/health"
+          for i in $(seq 1 6); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+            if [ "$STATUS" = "200" ]; then echo "Healthy"; exit 0; fi
+            echo "Attempt $i: $STATUS — retrying in 10s"
+            sleep 10
+          done
+          echo "Health check failed after 6 retries"
+          exit 1
+
+  deploy-sandbox:
+    name: Deploy Sandbox to ${{ github.event.inputs.environment || 'production' }}
+    runs-on: ubuntu-latest
+    needs: [ci-check]
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Determine Fly.io app name
+        id: app-name
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "app=antivibe-sandbox-staging" >> $GITHUB_OUTPUT
+          else
+            echo "app=antivibe-sandbox-prod" >> $GITHUB_OUTPUT
+          fi
+      - name: Deploy sandbox
+        id: deploy
+        run: |
+          flyctl deploy services/sandbox-svc --app ${{ steps.app-name.outputs.app }} --remote-only --strategy immediate
+      - name: Health check
+        run: |
+          URL="https://${{ steps.app-name.outputs.app }}.fly.dev/health"
+          for i in $(seq 1 6); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL" || echo "000")
+            if [ "$STATUS" = "200" ]; then echo "Healthy"; exit 0; fi
+            echo "Attempt $i: $STATUS — retrying in 10s"
+            sleep 10
+          done
+          echo "Health check failed after 6 retries"
+          exit 1
+
+  auto-rollback:
+    name: Auto-rollback on failure
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
+    needs:
+      - deploy-dashboard
+      - deploy-sandbox
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Determine Fly.io app names
+        id: apps
+        run: |
+          if [ "${{ github.event.inputs.environment }}" = "staging" ]; then
+            echo "dashboard=antivibe-dashboard-staging" >> $GITHUB_OUTPUT
+            echo "sandbox=antivibe-sandbox-staging" >> $GITHUB_OUTPUT
+          else
+            echo "dashboard=antivibe-dashboard-prod" >> $GITHUB_OUTPUT
+            echo "sandbox=antivibe-sandbox-prod" >> $GITHUB_OUTPUT
+          fi
+      - name: Rollback dashboard
+        run: flyctl rollback --app ${{ steps.apps.outputs.dashboard }} --image
+        continue-on-error: true
+      - name: Rollback sandbox
+        run: flyctl rollback --app ${{ steps.apps.outputs.sandbox }} --image
+        continue-on-error: true
