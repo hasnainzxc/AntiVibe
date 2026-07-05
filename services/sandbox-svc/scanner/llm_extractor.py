@@ -151,7 +151,13 @@ class LLMClient:
     """
 
     def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet"):
-        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        raw = api_key or os.environ.get("ANTHROPIC_API_KEY")
+        if not raw:
+            raise ValueError(
+                "ANTHROPIC_API_KEY is not set. Set the ANTHROPIC_API_KEY "
+                "environment variable or pass api_key to LLMClient()."
+            )
+        self.api_key = raw.strip()
         self.model = model
         # Lazy client construction: don't fail at scanner-import time
         # if the SDK isn't installed. `_get_client()` initializes on
@@ -161,6 +167,11 @@ class LLMClient:
     def _get_client(self):
         """Return a memoized Anthropic client, or None if the SDK is missing."""
         if self._client is None:
+            if not self.api_key.startswith("sk-ant-"):
+                raise ValueError(
+                    f"ANTHROPIC_API_KEY has invalid prefix '{self.api_key[:8]}...'. "
+                    "Must start with 'sk-ant-'."
+                )
             try:
                 from anthropic import Anthropic
                 self._client = Anthropic(api_key=self.api_key)
@@ -196,11 +207,21 @@ class LLMClient:
                 messages=[{"role": "user", "content": user}],
                 extra_headers={"anthropic-beta": "prompt-caching-2024-07-31"},
             )
+            tokens_in = response.usage.input_tokens
+            tokens_out = response.usage.output_tokens
+            cost_usd = (tokens_in * 3 + tokens_out * 15) / 1_000_000
+            logger.info(
+                "llm_tokens",
+                input_tokens=tokens_in,
+                output_tokens=tokens_out,
+                model=self.model,
+                cost_usd=round(cost_usd, 6),
+            )
             return {
                 "content": response.content[0].text,
                 "usage": {
-                    "input_tokens": response.usage.input_tokens,
-                    "output_tokens": response.usage.output_tokens,
+                    "input_tokens": tokens_in,
+                    "output_tokens": tokens_out,
                 },
             }
         except Exception as e:
