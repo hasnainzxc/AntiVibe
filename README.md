@@ -146,6 +146,61 @@ pnpm -r build && pnpm -r test && cd services/sandbox-svc && python -m pytest tes
 
 ---
 
+## Infrastructure Setup
+
+AntiVibe uses Supabase for Postgres, auth, and RLS. Before running the app, provision a Supabase project.
+
+### Prerequisites
+
+1. Create a free Supabase project at [supabase.com/dashboard](https://supabase.com/dashboard)
+2. From **Settings → API**, copy:
+   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_URL`
+   - **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY`
+3. Install the PostgreSQL client (`psql`) — required by the setup script
+
+### Provision Schema
+
+```bash
+cp env.template apps/dashboard/.env.local
+# Edit .env.local with real values from your Supabase project
+
+SUPABASE_URL=https://<ref>.supabase.co \
+SUPABASE_SERVICE_ROLE_KEY=eyJ... \
+bash scripts/supabase-setup.sh
+```
+
+This script:
+- Validates env vars are present
+- Applies `migrations/0001_init.sql` (9 tables: users, scans, findings, reports, oauth_tokens, webhook_deliveries, subscriptions, scan_usage, sandbox_egress_log)
+- Verifies all 9 tables exist after migration
+- Exits with code 1 on any failure
+
+### Verify RLS Policies
+
+```bash
+SUPABASE_URL=https://<ref>.supabase.co \
+SUPABASE_ANON_KEY=eyJ... \
+SUPABASE_SERVICE_ROLE_KEY=eyJ... \
+bash scripts/verify-supabase-rls.sh
+```
+
+This script runs 3 curl-based tests against the Supabase REST API:
+1. Unauthenticated read on `scans` — expects empty array
+2. Service-role insert — expects 201 Created
+3. Anon user trying to read another user's scan — expects empty array (RLS blocks it)
+
+### Storage Buckets
+
+After schema setup, create these private buckets in **Supabase Dashboard → Storage**:
+
+| Bucket | Visibility | Purpose |
+|--------|-----------|---------|
+| `scan-artifacts` | Private | Per-scan output artifacts |
+| `poc-captures` | Private | Encrypted PoC screenshots / captures |
+
+---
+
 ## Docs
 
 Full documentation lives in `docs/`:
