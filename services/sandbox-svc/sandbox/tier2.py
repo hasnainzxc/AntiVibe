@@ -68,6 +68,7 @@ from typing import Any, Optional
 import structlog
 
 from sandbox.containerize import generate_dockerfile, write_dockerfile
+from sandbox.local_runner import LocalDockerClient
 from sandbox.seeder import SeedResult, seed_postgres, seed_to_json
 from sandbox.spinup import SandboxHandle, SandboxSpinup
 from sandbox.jwt_forge import ForgedToken, forge as jwt_forge
@@ -165,6 +166,11 @@ async def _run_chain(
         bytes=len(dockerfile_content),
     )
 
+    local_docker = fly_client if isinstance(fly_client, LocalDockerClient) else None
+    image_ref = "antivibe-sandbox:latest"
+    if local_docker:
+        image_ref = local_docker.build_image(repo_root, dockerfile_path)
+
     # ─── Step 2: Seed ───
     # Choose seeder based on env. DATABASE_URL present → live
     # Postgres seed; otherwise → offline JSON seed. The JSON
@@ -204,8 +210,15 @@ async def _run_chain(
         scan_id="tier2-scan",
         repo_root=repo_root,
         stack=stack,
-        image_ref="antivibe-sandbox:latest",
+        image_ref=image_ref,
     )
+    if local_docker:
+        local_url = local_docker.get_container_url(handle.machine_id)
+        handle = SandboxHandle(
+            machine_id=handle.machine_id,
+            sandbox_url=local_url,
+            seed_credentials=handle.seed_credentials,
+        )
     state["handle"] = handle
     logger.info(
         "tier2.spin.done",

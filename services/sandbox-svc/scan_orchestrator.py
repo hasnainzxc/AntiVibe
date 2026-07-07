@@ -22,6 +22,7 @@ Stateless between requests: all scan state lives in Supabase.
 
 import asyncio
 import json
+import os
 import time
 import uuid
 from datetime import UTC, datetime
@@ -31,6 +32,7 @@ import structlog
 
 from circuit_breaker import CircuitBreaker, CircuitState
 from sandbox.tier2 import Tier2Result, run_tier2
+from sandbox.local_runner import LocalDockerClient
 from sb_client import get_supabase_client
 from scanner.clone import CloneError, RepoTooLarge
 from scanner.tier1 import run_tier1
@@ -59,6 +61,14 @@ def _now_iso() -> str:
 async def start_scan(repo_url: str, fly_client=None) -> dict:
     if not validate_repo_url(repo_url):
         return {"error": "Invalid repo URL. Must be an HTTP(S) GitHub URL."}, 400
+
+    if fly_client is None and "FLY_API_TOKEN" not in os.environ:
+        try:
+            fly_client = LocalDockerClient()
+            logger.info("scan.local_mode", transport="docker")
+        except Exception as e:
+            logger.warning("scan.local_mode_disabled", error=str(e))
+            fly_client = None
 
     scan_id = str(uuid.uuid4())
     created_at = _now_iso()

@@ -307,7 +307,9 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [x] 2. Provision Fly.io org + deploy dashboard app
+- [~] 2. Provision Fly.io org + deploy dashboard app
+  *DEFERRED* — using local dev mode instead. Dashboard runs on :3000 via `pnpm dev`.
+  Revisit when ready for production deployment.
 
   **What to do**:
   - Create Fly.io account (free tier)
@@ -431,7 +433,9 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [x] 4. Deploy sandbox-svc worker to Fly.io
+- [~] 4. Deploy sandbox-svc worker to Fly.io
+  *DEFERRED* — using local Docker mode instead. Sandbox-svc runs on :8080 via `uvicorn`.
+  Revisit when ready for production deployment.
 
   **What to do**:
   - Create `fly.toml` for sandbox-svc (Python, internal-only)
@@ -719,7 +723,9 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [~] 8. Real scan testing (3 repos, verify findings)
+- [ ] 8. Real scan testing (3 repos, verify findings)
+  *UNBLOCKED* — local Docker mode enables Tier 2 sandbox without Fly.
+  Run scans against fixture repos via `curl -X POST http://localhost:8080/scan`.
 
   **What to do**:
   - Scan 3 real public repos that are known to have security issues:

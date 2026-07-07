@@ -65,13 +65,16 @@ AntiVibe/
 
 ---
 
-## Quick Start
+## Quick Start (Local MVP)
+
+Run the full AntiVibe pipeline locally — no Fly.io, no cloud deploy.
 
 ### Prerequisites
 
-- Node.js ≥ 20
-- pnpm (`corepack enable`)
+- Node.js ≥ 20 + pnpm (`corepack enable`)
 - Python ≥ 3.12
+- Docker (for sandbox containers)
+- Supabase project (free tier) — [create one](https://supabase.com/dashboard)
 - Git
 
 ### 1. Install
@@ -97,29 +100,46 @@ cp services/sandbox-svc/.env.example services/sandbox-svc/.env
 # Edit .env files with your Supabase URL, anon key, service-role key
 ```
 
+Leave `FLY_API_TOKEN` unset in `services/sandbox-svc/.env` — the service auto-detects local mode and uses Docker instead of Fly Machines.
+
 ### 3. Run
 
 ```bash
-# Dashboard (http://localhost:3000)
-pnpm --filter apps/dashboard dev
-
-# All tests
-cd services/sandbox-svc && python -m pytest tests/ -v  # 220 tests
-cd ../.. && pnpm -r test                                  # 19 TS tests
-
-# Build check
-pnpm -r build
+bash scripts/dev-start.sh
 ```
 
-### 4. Scan (Tier 1 in-memory example)
+This starts:
+- **sandbox-svc** on [:8080](http://localhost:8080) — FastAPI scan service
+- **Dashboard** on [:3000](http://localhost:3000) — Next.js UI
 
-```python
-from scanner.tier1 import run_tier1_sync
+Stop with:
+```bash
+bash scripts/dev-stop.sh
+```
 
-result = run_tier1_sync("https://github.com/owner/repo")
-print(f"Status: {result['status']}")
-print(f"Findings: {len(result['findings'])}")
-# Output: list of findings from all analyzers (secret + config + LLM)
+### 4. Scan a repo
+
+```bash
+curl -X POST http://localhost:8080/scan \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/owner/repo"}'
+
+# Returns scan ID — poll status:
+curl http://localhost:8080/scan/<scan_id>/status
+```
+
+Or scan a local fixture:
+```bash
+curl -X POST http://localhost:8080/scan \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"file:///absolute/path/to/fixtures/vuln-nextjs"}'
+```
+
+### 5. Tests
+
+```bash
+cd services/sandbox-svc && python -m pytest tests/ -v
+cd ../.. && pnpm -r test
 ```
 
 ---
