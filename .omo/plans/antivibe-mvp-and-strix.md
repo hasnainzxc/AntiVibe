@@ -723,7 +723,7 @@ This will be inserted into `/home/hairzee/prods/AntiVibe/AGENTS.md`.
 
 ---
 
-- [ ] 8. Real scan testing (3 repos, verify findings)
+- [x] 8. Real scan testing (3 repos, verify findings)
   *UNBLOCKED* — local Docker mode enables Tier 2 sandbox without Fly.
   Run scans against fixture repos via `curl -X POST http://localhost:8080/scan`.
 
