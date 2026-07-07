@@ -58,7 +58,7 @@ export default function Home() {
       const res = await fetch('/api/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target: target.trim() }),
+        body: JSON.stringify({ repo_url: target.trim() }),
       })
 
       if (!res.ok) {
