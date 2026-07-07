@@ -90,38 +90,44 @@ pass "Connection string resolved (project: ${PROJECT_REF})"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-MIGRATION_FILE="${PROJECT_DIR}/migrations/0001_init.sql"
+MIGRATIONS_DIR="${PROJECT_DIR}/migrations"
 
-if [[ ! -f "$MIGRATION_FILE" ]]; then
+MIGRATION_FILES=($(ls "$MIGRATIONS_DIR"/*.sql 2>/dev/null | sort))
+
+if [[ ${#MIGRATION_FILES[@]} -eq 0 ]]; then
   echo ""
-  echo -e "  ${RED}ERROR:${NC} Migration file not found at:"
-  echo "    $MIGRATION_FILE"
+  echo -e "  ${RED}ERROR:${NC} No migration files found in:"
+  echo "    $MIGRATIONS_DIR"
   exit 1
 fi
-pass "Migration file found: migrations/0001_init.sql"
+pass "${#MIGRATION_FILES[@]} migration file(s) found in migrations/"
 
-# ── Step 4: Apply migration ────────────────────────────────────────
+# ── Step 4: Apply migrations ──────────────────────────────────────
 
 echo ""
-echo -e "  ${YELLOW}Applying migration...${NC}"
+echo -e "  ${YELLOW}Applying migrations...${NC}"
 
-PG_OUTPUT=""
-if PG_OUTPUT=$(psql "$CONN_STRING" -f "$MIGRATION_FILE" -v ON_ERROR_STOP=1 2>&1); then
-  pass "Migration applied via transaction pooler"
-elif PG_OUTPUT=$(psql "$CONN_STRING_SESSION" -f "$MIGRATION_FILE" -v ON_ERROR_STOP=1 2>&1); then
-  pass "Migration applied via direct connection (pooler unavailable)"
-else
-  echo ""
-  echo -e "  ${RED}ERROR:${NC} Migration failed. psql output:"
-  echo "$PG_OUTPUT" | sed 's/^/    /'
-  echo ""
-  echo "  Possible causes:"
-  echo "    - Supabase project does not exist or is paused"
-  echo "    - SUPABASE_SERVICE_ROLE_KEY is invalid or expired"
-  echo "    - IP not allowed (check Supabase Dashboard → Database → Network Restrictions)"
-  echo "    - Connection pooler is down (retry with direct connection)"
-  exit 1
-fi
+for MIGRATION_FILE in "${MIGRATION_FILES[@]}"; do
+  MIGRATION_NAME="$(basename "$MIGRATION_FILE")"
+  echo -e "  ${YELLOW}→ ${MIGRATION_NAME}${NC}"
+  PG_OUTPUT=""
+  if PG_OUTPUT=$(psql "$CONN_STRING" -f "$MIGRATION_FILE" -v ON_ERROR_STOP=1 2>&1); then
+    pass "${MIGRATION_NAME} applied via transaction pooler"
+  elif PG_OUTPUT=$(psql "$CONN_STRING_SESSION" -f "$MIGRATION_FILE" -v ON_ERROR_STOP=1 2>&1); then
+    pass "${MIGRATION_NAME} applied via direct connection"
+  else
+    echo ""
+    echo -e "  ${RED}ERROR:${NC} ${MIGRATION_NAME} failed. psql output:"
+    echo "$PG_OUTPUT" | sed 's/^/    /'
+    echo ""
+    echo "  Possible causes:"
+    echo "    - Supabase project does not exist or is paused"
+    echo "    - SUPABASE_SERVICE_ROLE_KEY is invalid or expired"
+    echo "    - IP not allowed (check Supabase Dashboard → Database → Network Restrictions)"
+    echo "    - Connection pooler is down (retry with direct connection)"
+    exit 1
+  fi
+done
 
 # ── Step 5: Verify tables ──────────────────────────────────────────
 

@@ -39,6 +39,7 @@ from scanner.tier1 import run_tier1
 
 logger = structlog.get_logger(__name__)
 
+DEV_USER_ID = os.environ.get("DEV_USER_ID", "00000000-0000-0000-0000-0000000000aa")
 TIER2_STACKS = {"nextjs", "express"}
 MAX_DB_RETRIES = 2
 FLY_MACHINE_COST_PER_SEC = 0.00000444
@@ -47,22 +48,39 @@ LLM_OUTPUT_COST_PER_M = 15.0
 
 
 def validate_repo_url(url: str) -> bool:
+    # Accept HTTP(S) GitHub URLs or local paths (for dev/testing)
     try:
         parsed = urlparse(url)
-        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+        if parsed.scheme in ("http", "https") and bool(parsed.netloc):
+            return True
     except Exception:
-        return False
+        pass
+    # Local filesystem path
+    if os.path.isdir(url) or os.path.isdir(os.path.abspath(url)):
+        return True
+    return False
 
 
 def _now_iso() -> str:
     return datetime.now(UTC).isoformat()
 
 
+def _is_local_dev() -> bool:
+    return "FLY_API_TOKEN" not in os.environ
+
+
+def _ensure_dev_user(sb):
+    try:
+        sb.rpc("create_dev_user", {"p_id": DEV_USER_ID, "p_email": "dev@antivibe.local"}).execute()
+    except Exception as e:
+        logger.warning("scan.dev_user_creation_failed", error=str(e))
+
+
 async def start_scan(repo_url: str, fly_client=None) -> dict:
     if not validate_repo_url(repo_url):
         return {"error": "Invalid repo URL. Must be an HTTP(S) GitHub URL."}, 400
 
-    if fly_client is None and "FLY_API_TOKEN" not in os.environ:
+    if fly_client is None and _is_local_dev():
         try:
             fly_client = LocalDockerClient()
             logger.info("scan.local_mode", transport="docker")
@@ -74,9 +92,16 @@ async def start_scan(repo_url: str, fly_client=None) -> dict:
     created_at = _now_iso()
 
     sb = get_supabase_client(service_role=True)
+
+    user_id = None
+    if _is_local_dev():
+        _ensure_dev_user(sb)
+        user_id = DEV_USER_ID
+
     try:
         sb.table("scans").insert({
             "id": scan_id,
+            "user_id": user_id,
             "repo_url": repo_url,
             "status": "queued",
             "created_at": created_at,
