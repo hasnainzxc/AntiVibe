@@ -42,6 +42,9 @@ pin a worker for minutes.
 """
 
 import asyncio
+import os
+import shutil
+import tempfile
 import time
 import json
 from pathlib import Path
@@ -124,7 +127,12 @@ async def run_tier1(
 
     try:
         logger.info("tier1.clone.start", repo=repo_url)
-        repo_path = clone_repo(repo_url, branch=branch)
+        if os.path.isdir(repo_url):
+            repo_path = tempfile.mkdtemp(prefix="antivibe-local-")
+            shutil.copytree(repo_url, repo_path, dirs_exist_ok=True)
+            logger.info("tier1.clone.local_copy", src=repo_url, dest=repo_path)
+        else:
+            repo_path = clone_repo(repo_url, branch=branch)
         result["repo"] = repo_path
         logger.info("tier1.clone.done", path=repo_path)
 
