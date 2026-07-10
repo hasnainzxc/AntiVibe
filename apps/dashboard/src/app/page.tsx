@@ -1,17 +1,15 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { Shield, Terminal, Cloud, Brain, CheckCircle, FileCode, Lock, Search, Star, Bug, ChevronRight, Zap } from 'lucide-react'
 
 /* ────────────────────────────────
-   AntiVibe Landing Page — Stitch Design Replication
-   Exact 1:1 of https://stitch.withgoogle.com/projects/127707556099249343
-   Preserves all scan functionality from original page.tsx
+   AntiVibe Landing Page — Fly.io 1:1 Replication
+   Exact specs from styles.refero.design/style/fly.io
    ──────────────────────────────── */
 
 export default function Home() {
-  /* ── Scan State (preserved from original) ── */
+  /* ── Scan State (preserved) ── */
   const [target, setTarget] = useState('')
   const [scanId, setScanId] = useState<string | null>(null)
   const [status, setStatus] = useState<string | null>(null)
@@ -19,23 +17,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const terminalRef = useRef<HTMLDivElement>(null)
-
-  /* ── Terminal animation ── */
-  useEffect(() => {
-    if (!terminalRef.current) return
-    const lines = terminalRef.current.querySelectorAll('.terminal-line')
-    lines.forEach((el, index) => {
-      const htmlEl = el as HTMLElement
-      htmlEl.style.opacity = '0'
-      htmlEl.style.transform = 'translateY(5px)'
-      setTimeout(() => {
-        htmlEl.style.transition = 'all 0.4s ease-out'
-        htmlEl.style.opacity = '1'
-        htmlEl.style.transform = 'translateY(0)'
-      }, 800 + (index * 200))
-    })
-  }, [])
 
   /* ── Poll Status (preserved) ── */
   const pollStatus = useCallback((id: string) => {
@@ -68,15 +49,8 @@ export default function Home() {
   /* ── Handle Scan (preserved) ── */
   const handleScan = useCallback(async () => {
     if (!target.trim()) return
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current)
-      pollingRef.current = null
-    }
-    setLoading(true)
-    setError(null)
-    setStatus('starting')
-    setFindings(null)
-    setScanId(null)
+    if (pollingRef.current) { clearInterval(pollingRef.current); pollingRef.current = null }
+    setLoading(true); setError(null); setStatus('starting'); setFindings(null); setScanId(null)
     try {
       const res = await fetch('/api/scan', {
         method: 'POST',
@@ -100,157 +74,150 @@ export default function Home() {
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error'
-      setError(msg)
-      setLoading(false)
+      setError(msg); setLoading(false)
     }
   }, [target, pollStatus])
 
-  /* ── Design Tokens (exact from Stitch) ── */
-  const surface = '#fcf8ff'
-  const onSurface = '#181445'
-  const primary = '#4104da'
-  const onPrimary = '#ffffff'
-  const surfaceVariant = '#e3dfff'
-  const outline = '#787588'
-  const outlineVariant = '#c9c4d9'
-  const lavenderAccent = '#f5f3ff'
-  const mintAccent = '#d1fae5'
-  const peachAccent = '#ffedd5'
-  const inverseSurface = '#2d2a5b'
-  const secondaryFixedDim = '#d0bcff'
-  const securityPass = '#10B981'
-  const securityFail = '#EF4444'
-  const securityWarning = '#F59E0B'
-
   return (
-    <div className="flex flex-col min-h-screen" style={{ backgroundColor: surface, color: onSurface, fontFamily: 'var(--font-hanken), sans-serif' }}>
+    <div className="flex flex-col min-h-screen bg-[#f1f2f9]">
 
       {/* ═══════════════════════════════════════
-          NAVBAR — Fixed, Glassmorphism
+          NAVBAR — Floating Pill (Fly.io style)
           ═══════════════════════════════════════ */}
-      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-12 h-20 border-b" style={{ backgroundColor: 'rgba(252,248,255,0.8)', backdropFilter: 'blur(20px)', borderColor: 'rgba(201,196,217,0.3)' }}>
-        <div className="flex items-center gap-2" style={{ fontFamily: 'var(--font-libre), serif', fontSize: '24px', fontWeight: 700, color: primary }}>
-          <Shield className="w-6 h-6" style={{ color: primary }} />
-          AntiVibe
-        </div>
-        <nav className="hidden md:flex gap-6 items-center">
-          <a href="#pipeline" className="font-semibold hover:text-[#4104da] transition-colors" style={{ color: onSurface }}>Products</a>
-          <a href="#security" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Docs</a>
-          <a href="#cta" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Pricing</a>
+      <header className="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-auto">
+        <nav className="flex items-center gap-1 px-2 py-2 rounded-full bg-white/70 backdrop-blur-xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-[#e7e6f4]/60">
+          {/* Logo */}
+          <div className="flex items-center gap-2 px-4 py-1.5">
+            <div className="w-6 h-6 rounded-full bg-[#7c3aed] flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <span className="font-body text-[15px] font-semibold text-[#281950]">AntiVibe</span>
+          </div>
+
+          {/* Nav Links — center */}
+          <div className="hidden md:flex items-center gap-1 px-2">
+            {['Products', 'Docs', 'Pricing'].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="px-3 py-1.5 rounded-full font-body text-[14px] font-medium text-[#5e537c] hover:text-[#281950] hover:bg-[#f1f2f9]/80 transition-all"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+
+          {/* Auth — right */}
+          <div className="flex items-center gap-2 px-2">
+            <button className="px-4 py-1.5 rounded-full font-body text-[14px] font-medium text-[#5e537c] hover:text-[#281950] transition-colors">
+              Sign In
+            </button>
+            <button className="px-4 py-1.5 rounded-full font-body text-[14px] font-semibold text-white bg-[#7c3aed] hover:bg-[#6d28d9] transition-colors">
+              Get Started
+            </button>
+          </div>
         </nav>
-        <div className="flex items-center gap-4">
-          <button className="hidden md:block hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Login</button>
-          <button className="px-5 py-2.5 rounded-lg font-bold hover:brightness-110 transition-all" style={{ backgroundColor: primary, color: onPrimary }}>Get Started</button>
-        </div>
       </header>
 
-      <main className="pt-20">
+      <main>
 
         {/* ═══════════════════════════════════════
-            HERO SECTION — 95vh, Illustration Background
+            HERO — Full Viewport, Illustration Bleeds
             ═══════════════════════════════════════ */}
-        <section className="relative min-h-[95vh] flex flex-col items-center justify-center pt-32 pb-20 overflow-hidden">
-          {/* Background Illustration */}
-          <div className="absolute inset-0 z-0 flex justify-center items-center pointer-events-none opacity-40">
+        <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20">
+          
+          {/* Background Illustration — full bleed, vibrant, no fade */}
+          <div className="absolute inset-0 z-0">
             <Image
               src="/illustrations/hero-thought-cloud.jpg"
-              alt="AntiVibe Hero Illustration"
-              width={1440}
-              height={900}
-              className="w-full max-w-[1440px] h-auto object-cover hero-bleed-image"
+              alt=""
+              fill
+              className="object-cover object-center"
               priority
+              sizes="100vw"
             />
           </div>
 
-          <div className="relative z-10 max-w-[900px] px-4 text-center">
-            {/* Mascot Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-8 rounded-full border" style={{ backgroundColor: lavenderAccent, borderColor: 'rgba(65,4,218,0.2)', color: primary, fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em' }}>
-              <Zap className="w-4 h-4" />
-              ELITE AGENTIC SECURITY
-            </div>
-
-            <h1 className="mb-8 leading-tight" style={{ fontFamily: 'var(--font-libre), serif', fontSize: 'clamp(40px, 5vw, 64px)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', color: onSurface }}>
-              Stop the <span className="italic" style={{ color: primary }}>bad vibes</span><br className="hidden md:block" /> in your AI code.
+          {/* Content — centered, z-10, clear zone */}
+          <div className="relative z-10 text-center max-w-[720px] px-6">
+            
+            {/* Headline — Fly.io exact style */}
+            <h1 
+              className="font-display text-[clamp(36px,5vw,64px)] font-medium leading-[1.15] tracking-[-0.045em] text-[#281950]"
+            >
+              Stop the bad vibes.
+              <br />
+              <em className="italic font-medium">in your AI code.</em>
             </h1>
 
-            <p className="mb-12 max-w-2xl mx-auto" style={{ fontFamily: 'var(--font-hanken), sans-serif', fontSize: '18px', lineHeight: '28px', color: '#474556' }}>
-              AntiVibe audits your codebase in an isolated Fly.io sandbox. We forge JWTs, fuzz your BOLA/IDOR endpoints, and open the PR to fix it.
+            {/* Body — Fly.io exact style */}
+            <p className="font-body text-[18px] leading-[30px] text-[#5e537c] max-w-[560px] mx-auto mt-6">
+              The platform for devs who just want to ship safely. Paste a repo URL, get a full security audit with patches you can merge.
             </p>
 
-            {/* ── Scan Form (preserved functionality, styled to match) ── */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <div className="relative flex-1 max-w-md">
-                <input
-                  type="text"
-                  value={target}
-                  onChange={(e) => setTarget(e.target.value)}
-                  placeholder="github.com/user/repo or /path/to/repo"
-                  className="w-full px-6 py-4 rounded-lg border font-medium transition-all focus:outline-none focus:ring-2"
-                  style={{
-                    fontFamily: 'var(--font-jetbrains), monospace',
-                    fontSize: '14px',
-                    borderColor: outlineVariant,
-                    backgroundColor: '#ffffff',
-                    color: onSurface,
-                  }}
-                  onKeyDown={(e) => e.key === 'Enter' && handleScan()}
-                />
-                <div className="absolute -top-3 -right-3 hidden md:block animate-bounce">
-                  <div className="px-2 py-1 rounded-md border text-sm" style={{ backgroundColor: mintAccent, borderColor: 'rgba(65,4,218,0.2)', color: primary, fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px' }}>
-                    Fast & Isolated!
-                  </div>
-                </div>
-              </div>
+            {/* Scan Form — integrated as CTA */}
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 max-w-[480px] mx-auto">
+              <input
+                type="text"
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+                placeholder="github.com/user/repo"
+                className="w-full sm:flex-1 px-5 py-3 rounded-full border border-[#e7e6f4] bg-white/90 backdrop-blur-sm font-body text-[15px] text-[#281950] placeholder:text-[#a39ac1] focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/30 focus:border-[#7c3aed] transition-all"
+                onKeyDown={(e) => e.key === 'Enter' && handleScan()}
+              />
               <button
                 onClick={handleScan}
                 disabled={loading || !target.trim()}
-                className="px-8 py-4 rounded-lg font-bold text-lg transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 flex items-center gap-3 hard-shadow"
-                style={{ backgroundColor: primary, color: onPrimary }}
+                className="w-full sm:w-auto px-6 py-3 rounded-full font-body text-[15px] font-semibold text-white bg-[#7c3aed] hover:bg-[#6d28d9] active:scale-95 disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     Scanning...
                   </>
                 ) : (
                   <>
-                    <Cloud className="w-5 h-5" />
-                    Scan Private Repo
+                    Scan your repo
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
                   </>
                 )}
               </button>
             </div>
 
-            {/* Status / Error / Findings (preserved) */}
+            {/* Status / Error / Findings */}
             {error && (
-              <div className="mb-6 rounded-lg border px-4 py-3 text-sm" style={{ borderColor: 'rgba(186,26,26,0.2)', backgroundColor: 'rgba(186,26,26,0.05)', color: '#ba1a1a' }}>
+              <div className="mt-4 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm font-body text-red-700 max-w-[480px] mx-auto">
                 {error}
               </div>
             )}
 
             {status && !error && status !== 'idle' && (
-              <div className="mb-6 flex items-center justify-center gap-2 text-sm" style={{ color: '#474556' }}>
-                <span className={`inline-block w-2 h-2 rounded-full ${status === 'completed' ? 'bg-[#10B981]' : status === 'failed' ? 'bg-[#EF4444]' : 'bg-[#F59E0B] animate-pulse'}`} />
-                Status: <span className="font-semibold">{status}</span>
-                {scanId && <span className="text-xs opacity-60" style={{ fontFamily: 'var(--font-jetbrains), monospace' }}>ID: {scanId}</span>}
+              <div className="mt-4 flex items-center justify-center gap-2 text-sm font-body text-[#5e537c]">
+                <span className={`inline-block w-2 h-2 rounded-full ${status === 'completed' ? 'bg-green-500' : status === 'failed' ? 'bg-red-500' : 'bg-amber-400 animate-pulse'}`} />
+                <span className="font-medium">{status}</span>
+                {scanId && <span className="text-xs opacity-60 font-mono">ID: {scanId}</span>}
               </div>
             )}
 
             {findings && findings.length > 0 && (
-              <div className="space-y-3 text-left max-w-2xl mx-auto">
-                <h3 className="text-lg font-semibold text-center" style={{ fontFamily: 'var(--font-libre), serif', color: onSurface }}>
+              <div className="mt-6 space-y-3 text-left max-w-[560px] mx-auto">
+                <h3 className="font-display text-[22px] font-medium text-[#281950] text-center">
                   Findings ({findings.length})
                 </h3>
                 {findings.map((f, i) => (
-                  <div key={i} className="rounded-lg border p-4" style={{ borderColor: outlineVariant, backgroundColor: '#ffffff' }}>
-                    <pre className="text-xs overflow-auto whitespace-pre-wrap" style={{ fontFamily: 'var(--font-jetbrains), monospace', color: '#474556' }}>{JSON.stringify(f, null, 2)}</pre>
+                  <div key={i} className="rounded-xl bg-white/80 backdrop-blur-sm border border-[#e7e6f4] p-4">
+                    <pre className="text-xs overflow-auto whitespace-pre-wrap font-mono text-[#5e537c]">{JSON.stringify(f, null, 2)}</pre>
                   </div>
                 ))}
               </div>
             )}
 
             {findings && findings.length === 0 && status === 'completed' && (
-              <div className="rounded-lg border px-4 py-3 text-sm" style={{ borderColor: 'rgba(16,185,129,0.2)', backgroundColor: 'rgba(16,185,129,0.05)', color: '#10B981' }}>
+              <div className="mt-4 rounded-xl bg-green-50 border border-green-100 px-4 py-3 text-sm font-body text-green-700 max-w-[480px] mx-auto">
                 No findings — scan completed clean.
               </div>
             )}
@@ -258,110 +225,89 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════
-            SOCIAL PROOF
+            TRUSTED BY
             ═══════════════════════════════════════ */}
-        <section className="py-12 border-y" style={{ backgroundColor: surface, borderColor: 'rgba(201,196,217,0.2)' }}>
-          <div className="max-w-[1200px] mx-auto px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
-            <p style={{ fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', color: outline }}>
-              TRUSTED BY VIBE-CODERS AT
+        <section className="py-16 border-t border-[#e7e6f4]">
+          <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            <p className="font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#a39ac1]">
+              Trusted by vibe-coders at
             </p>
-            <div className="flex flex-wrap justify-center gap-10 md:gap-16 opacity-40 grayscale">
-              {['TECH_CORP', 'VIBELABS', 'MODERN_AI', 'SUDO_APPS'].map((name) => (
-                <div key={name} style={{ fontFamily: 'var(--font-libre), serif', fontSize: '24px', fontWeight: 700 }}>{name}</div>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-12 opacity-30 grayscale">
+              {['VibeLabs', 'ModernAI', 'TechCorp', 'SudoApps'].map((name) => (
+                <span key={name} className="font-display text-[20px] font-semibold text-[#281950]">{name}</span>
               ))}
             </div>
           </div>
         </section>
 
         {/* ═══════════════════════════════════════
-            3-TIER AUDIT PIPELINE
+            FEATURES — 3-Tier Pipeline
             ═══════════════════════════════════════ */}
-        <section id="pipeline" className="max-w-[1200px] mx-auto px-4 md:px-12 py-24 md:py-40">
-          <div className="text-center mb-24 relative">
-            <h2 style={{ fontFamily: 'var(--font-libre), serif', fontSize: 'clamp(28px, 3vw, 48px)', fontWeight: 600, lineHeight: 1.2, color: onSurface }}>
-              The 3-Tier Audit Pipeline
-            </h2>
-            <div className="h-1 w-24 rounded-full mx-auto mt-4" style={{ backgroundColor: primary }} />
-            <p className="mt-4 max-w-xl mx-auto" style={{ color: '#474556' }}>
-              Engineered for depth, speed, and autonomous remediation.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Tier 1: Static Semantic Scan */}
-            <div className="p-6 border rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 group" style={{ backgroundColor: '#ffffff', borderColor: 'rgba(201,196,217,0.4)' }}>
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: lavenderAccent }}>
-                <Terminal className="w-7 h-7" style={{ color: primary }} />
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-libre), serif', fontSize: '22px', fontWeight: 600, marginBottom: '16px', color: onSurface }}>
-                1. Static Semantic Scan
-              </h3>
-              <p className="leading-relaxed mb-6" style={{ color: '#474556' }}>
-                AST analysis + secret detection with LLM semantic depth. We don&apos;t just match patterns; we understand developer intent.
-              </p>
-              <div className="p-4 rounded-lg overflow-hidden" style={{ backgroundColor: inverseSurface }}>
-                <div className="terminal-dots mb-2"><span /><span /><span /></div>
-                <div style={{ fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px', color: secondaryFixedDim }}>$ antivibe scan . --deep</div>
-                <div style={{ fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px', color: '#ba1a1a', marginTop: '4px' }}>[!] Semantic match: Security Risk</div>
-              </div>
+        <section id="products" className="py-24 md:py-32">
+          <div className="max-w-[1200px] mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="font-display text-[clamp(28px,3vw,36px)] font-medium leading-[1.2] tracking-[-0.025em] text-[#281950]">
+                The 3-Tier Audit Pipeline
+              </h2>
+              <div className="w-20 h-0.5 bg-[#7c3aed] mx-auto mt-4 rounded-full" />
             </div>
 
-            {/* Tier 2: Isolated Sandbox */}
-            <div className="p-6 border rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 group" style={{ backgroundColor: '#ffffff', borderColor: 'rgba(201,196,217,0.4)' }}>
-              <div className="w-full aspect-square mb-6 rounded-2xl overflow-hidden flex items-center justify-center relative" style={{ backgroundColor: 'rgba(209,250,229,0.2)' }}>
-                <Image src="/illustrations/sandbox.png" alt="Isolated Sandbox" width={300} height={300} className="w-4/5 h-4/5 object-contain" />
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-libre), serif', fontSize: '22px', fontWeight: 600, marginBottom: '16px', color: onSurface }}>
-                2. Isolated Sandbox
-              </h3>
-              <p className="leading-relaxed" style={{ color: '#474556' }}>
-                We spin up your app in an ephemeral Fly.io microVM with mock seeded DBs to execute and verify code safely in real-time.
-              </p>
-            </div>
-
-            {/* Tier 3: Agentic Fuzzing */}
-            <div className="p-6 border rounded-xl transition-all hover:shadow-xl hover:-translate-y-1 group" style={{ backgroundColor: '#ffffff', borderColor: 'rgba(201,196,217,0.4)' }}>
-              <div className="w-full aspect-square mb-6 rounded-2xl overflow-hidden flex items-center justify-center" style={{ backgroundColor: 'rgba(255,237,213,0.2)' }}>
-                <Image src="/illustrations/fuzzing.png" alt="Agentic Fuzzing" width={300} height={300} className="w-4/5 h-4/5 object-contain" />
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-libre), serif', fontSize: '22px', fontWeight: 600, marginBottom: '16px', color: onSurface }}>
-                3. Agentic Fuzzing
-              </h3>
-              <p className="leading-relaxed" style={{ color: '#474556' }}>
-                Our agent forges identities and never stops at a 403. It finds the complex logic flaws that static tools always miss.
-              </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { title: 'Static Semantic Scan', desc: 'AST analysis + secret detection with LLM semantic depth. We understand developer intent, not just patterns.', icon: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5' },
+                { title: 'Isolated Sandbox', desc: 'Spin up your app in an ephemeral microVM with mock seeded DBs. Execute and verify safely in real-time.', icon: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' },
+                { title: 'Agentic Fuzzing', desc: 'Our agent forges identities and never stops at a 403. It finds complex logic flaws that static tools miss.', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
+              ].map((feature, i) => (
+                <div key={i} className="p-8 rounded-2xl bg-white border border-[#e7e6f4] hover:shadow-lg hover:-translate-y-1 transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-[#f1f2f9] flex items-center justify-center mb-6">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={feature.icon} />
+                    </svg>
+                  </div>
+                  <h3 className="font-display text-[22px] font-medium tracking-[-0.025em] text-[#281950] mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="font-body text-[16px] leading-[26px] text-[#5e537c]">
+                    {feature.desc}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         {/* ═══════════════════════════════════════
-            DEEP SECURITY / TERMINAL SECTION
+            DEEP SECURITY
             ═══════════════════════════════════════ */}
-        <section id="security" className="py-24 md:py-40 overflow-hidden" style={{ backgroundColor: '#1e1b4b', color: '#ffffff' }}>
-          <div className="max-w-[1200px] mx-auto px-4 md:px-12 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <section className="py-24 md:py-32 bg-[#191034] text-white">
+          <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 style={{ fontFamily: 'var(--font-libre), serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '32px' }}>
+              <h2 className="font-display text-[clamp(28px,3vw,36px)] font-medium leading-[1.2] tracking-[-0.025em] mb-8">
                 Deep security<br />without the friction.
               </h2>
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="flex gap-4 items-start">
-                  <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(90,56,241,0.2)' }}>
-                    <Image src="/illustrations/auto-pr.png" alt="Auto-PR" width={40} height={40} className="w-10 h-10" />
+                  <div className="shrink-0 w-10 h-10 rounded-lg bg-[#7c3aed]/20 flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8bfff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg mb-1">Auto-Patching Agent</h4>
-                    <p className="leading-relaxed" style={{ color: '#c9c4d9' }}>
-                      Not just a report. We create the branch and open the PR for you to review, with full context on the fix.
+                    <h4 className="font-body text-[16px] font-semibold mb-1">Auto-Patching Agent</h4>
+                    <p className="font-body text-[15px] leading-[24px] text-[#a39ac1]">
+                      We create the branch and open the PR for you to review, with full context on every fix.
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-4 items-start">
-                  <div className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center border" style={{ backgroundColor: 'rgba(255,255,255,0.05)', borderColor: 'rgba(255,255,255,0.1)' }}>
-                    <Lock className="w-7 h-7" style={{ color: secondaryFixedDim }} />
+                  <div className="shrink-0 w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c8bfff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-lg mb-1">JWT Forgery Engine</h4>
-                    <p className="leading-relaxed" style={{ color: '#c9c4d9' }}>
+                    <h4 className="font-body text-[16px] font-semibold mb-1">JWT Forgery Engine</h4>
+                    <p className="font-body text-[15px] leading-[24px] text-[#a39ac1]">
                       Simulates complex identity attacks to ensure your auth is rock solid across all API versions.
                     </p>
                   </div>
@@ -371,26 +317,20 @@ export default function Home() {
 
             {/* Terminal Window */}
             <div className="relative">
-              <div className="p-6 rounded-xl border shadow-2xl" style={{ backgroundColor: '#1e1e2e', borderColor: 'rgba(255,255,255,0.1)' }}>
-                <div className="flex gap-2 mb-6">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ff5f56' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ffbd2e' }} />
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#27c93f' }} />
+              <div className="rounded-2xl bg-[#1e1b2e] border border-white/10 p-6 shadow-2xl">
+                <div className="flex gap-2 mb-4">
+                  <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                  <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
                 </div>
-                <div ref={terminalRef} className="space-y-2" style={{ fontFamily: 'var(--font-jetbrains), monospace', fontSize: '14px', lineHeight: '20px' }}>
-                  <div className="terminal-line" style={{ color: secondaryFixedDim }}>@antivibe/detective-bird running...</div>
-                  <div className="terminal-line" style={{ color: 'rgba(255,255,255,0.7)' }}>Analyzing /api/user/v1/profile...</div>
-                  <div className="terminal-line p-2 border-l-2" style={{ backgroundColor: 'rgba(186,26,26,0.2)', borderColor: '#ba1a1a', color: '#ffdad6' }}>
-                    VULNERABILITY: Broken Object Level Authorization (BOLA)
+                <div className="space-y-1.5 font-mono text-[13px] leading-[20px]">
+                  <div className="text-[#c8bfff]">@antivibe/detective-bird running...</div>
+                  <div className="text-white/60">Analyzing /api/user/v1/profile...</div>
+                  <div className="px-3 py-2 rounded-lg bg-red-500/10 border-l-2 border-red-400 text-red-200">
+                    VULNERABILITY: Broken Object Level Authorization
                   </div>
-                  <div className="terminal-line" style={{ color: mintAccent }}>Generating fix: auth_middleware.ts...</div>
-                  <div className="terminal-line" style={{ color: mintAccent }}>Opening PR: #402 Fix BOLA vulnerability</div>
-                </div>
-              </div>
-              {/* Bird Mascot Artifact */}
-              <div className="absolute -right-6 -bottom-6">
-                <div className="p-3 rounded-full border shadow-xl" style={{ backgroundColor: surface, borderColor: onSurface }}>
-                  <Search className="w-8 h-8" style={{ color: primary }} />
+                  <div className="text-green-300">Generating fix: auth_middleware.ts...</div>
+                  <div className="text-green-300">Opening PR: #402 Fix BOLA vulnerability</div>
                 </div>
               </div>
             </div>
@@ -398,31 +338,25 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════
-            BOTTOM CTA — Sketchy Border
+            CTA
             ═══════════════════════════════════════ */}
-        <section id="cta" className="max-w-[1200px] mx-auto px-4 md:px-12 py-24 md:py-32 text-center">
-          <div className="sketchy-border p-12 md:p-16 relative overflow-hidden" style={{ backgroundColor: 'rgba(245,243,255,0.5)' }}>
-            <h2 style={{ fontFamily: 'var(--font-libre), serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: '24px', color: onSurface }}>
+        <section id="pricing" className="py-24 md:py-32">
+          <div className="max-w-[720px] mx-auto px-6 text-center">
+            <h2 className="font-display text-[clamp(32px,4vw,48px)] font-medium leading-[1.15] tracking-[-0.045em] text-[#281950] mb-4">
               Ready to secure the vibe?
             </h2>
-            <p className="mb-10 max-w-xl mx-auto" style={{ fontSize: '18px', lineHeight: '28px', color: '#474556' }}>
-              No credit card required. Start with one free scan to see what&apos;s lurking in your AI-generated routes. Just $19/mo for pro.
+            <p className="font-body text-[18px] leading-[30px] text-[#5e537c] mb-8 max-w-[480px] mx-auto">
+              No credit card required. Start with one free scan to see what&apos;s lurking in your AI-generated routes.
             </p>
-            <div className="flex flex-col items-center gap-4">
-              <button className="px-14 py-5 rounded-lg font-bold text-xl transition-all hover:scale-[1.02] active:scale-95 hard-shadow" style={{ backgroundColor: primary, color: onPrimary }}>
-                Claim 1 Free Scan
-              </button>
-              <p style={{ fontFamily: 'var(--font-jetbrains), monospace', fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', color: '#474556' }}>
-                TRUSTED BY 2,000+ DEVELOPERS
-              </p>
-            </div>
-            {/* Floating Decorative Artifacts */}
-            <div className="absolute top-10 right-10 opacity-10 rotate-12 pointer-events-none hidden md:block">
-              <Shield className="w-32 h-32" style={{ color: onSurface }} />
-            </div>
-            <div className="absolute bottom-10 left-10 opacity-10 -rotate-12 pointer-events-none hidden md:block">
-              <Bug className="w-32 h-32" style={{ color: onSurface }} />
-            </div>
+            <button className="px-8 py-3.5 rounded-full font-body text-[16px] font-semibold text-white bg-[#7c3aed] hover:bg-[#6d28d9] active:scale-95 transition-all inline-flex items-center gap-2">
+              Claim 1 Free Scan
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <p className="mt-4 font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#a39ac1]">
+              Trusted by 2,000+ developers
+            </p>
           </div>
         </section>
 
@@ -431,37 +365,43 @@ export default function Home() {
       {/* ═══════════════════════════════════════
           FOOTER
           ═══════════════════════════════════════ */}
-      <footer className="w-full py-16 px-4 md:px-12 border-t" style={{ backgroundColor: surface, borderColor: 'rgba(201,196,217,0.3)' }}>
-        <div className="max-w-[1200px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
+      <footer className="border-t border-[#e7e6f4] py-16">
+        <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
           <div className="col-span-2 md:col-span-1">
-            <div className="mb-6" style={{ fontFamily: 'var(--font-libre), serif', fontSize: '24px', fontWeight: 700, color: primary }}>
-              AntiVibe
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 rounded-full bg-[#7c3aed] flex items-center justify-center">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <span className="font-display text-[20px] font-semibold text-[#281950]">AntiVibe</span>
             </div>
-            <p className="text-sm leading-relaxed" style={{ color: '#474556' }}>
-              &copy; 2024 AntiVibe.<br />Isolated, agentic security for modern AI stacks.
+            <p className="font-body text-[14px] leading-[22px] text-[#5e537c]">
+              &copy; 2024 AntiVibe. Isolated, agentic security for modern AI stacks.
             </p>
           </div>
           <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest" style={{ color: onSurface }}>Product</h4>
-            <ul className="space-y-4 text-sm">
-              <li><a href="#pipeline" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Features</a></li>
-              <li><a href="#cta" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Pricing</a></li>
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>CLI Docs</a></li>
+            <h4 className="font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#281950] mb-4">Product</h4>
+            <ul className="space-y-3">
+              {['Features', 'Pricing', 'CLI Docs'].map((item) => (
+                <li key={item}><a href="#" className="font-body text-[14px] text-[#5e537c] hover:text-[#7c3aed] transition-colors">{item}</a></li>
+              ))}
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest" style={{ color: onSurface }}>Company</h4>
-            <ul className="space-y-4 text-sm">
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>About</a></li>
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Security</a></li>
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Blog</a></li>
+            <h4 className="font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#281950] mb-4">Company</h4>
+            <ul className="space-y-3">
+              {['About', 'Security', 'Blog'].map((item) => (
+                <li key={item}><a href="#" className="font-body text-[14px] text-[#5e537c] hover:text-[#7c3aed] transition-colors">{item}</a></li>
+              ))}
             </ul>
           </div>
           <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest" style={{ color: onSurface }}>Legal</h4>
-            <ul className="space-y-4 text-sm">
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Privacy</a></li>
-              <li><a href="#" className="hover:text-[#4104da] transition-colors" style={{ color: '#474556' }}>Terms</a></li>
+            <h4 className="font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#281950] mb-4">Legal</h4>
+            <ul className="space-y-3">
+              {['Privacy', 'Terms'].map((item) => (
+                <li key={item}><a href="#" className="font-body text-[14px] text-[#5e537c] hover:text-[#7c3aed] transition-colors">{item}</a></li>
+              ))}
             </ul>
           </div>
         </div>

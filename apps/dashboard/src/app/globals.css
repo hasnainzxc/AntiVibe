@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-hanken);
-  --font-mono: var(--font-jetbrains);
-  --font-heading: var(--font-libre);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -46,97 +46,45 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-
-  /* Stitch Design System Tokens */
-  --color-surface: #fcf8ff;
-  --color-surface-dim: #dad6ff;
-  --color-surface-bright: #fcf8ff;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f6f2ff;
-  --color-surface-container: #efebff;
-  --color-surface-container-high: #e9e5ff;
-  --color-surface-container-highest: #e3dfff;
-  --color-on-surface: #181445;
-  --color-on-surface-variant: #474556;
-  --color-inverse-surface: #2d2a5b;
-  --color-inverse-on-surface: #f3eeff;
-  --color-outline: #787588;
-  --color-outline-variant: #c9c4d9;
-  --color-surface-tint: #5a37f1;
-  --color-primary: #4104da;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #5a38f1;
-  --color-on-primary-container: #dbd4ff;
-  --color-inverse-primary: #c8bfff;
-  --color-secondary: #6b38d4;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #8455ef;
-  --color-on-secondary-container: #fffbff;
-  --color-tertiary: #7e2d00;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #a53d00;
-  --color-on-tertiary-container: #ffcfbc;
-  --color-error: #ba1a1a;
-  --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
-  --color-primary-fixed: #e5deff;
-  --color-primary-fixed-dim: #c8bfff;
-  --color-on-primary-fixed: #180064;
-  --color-on-primary-fixed-variant: #4103da;
-  --color-secondary-fixed: #e9ddff;
-  --color-secondary-fixed-dim: #d0bcff;
-  --color-on-secondary-fixed: #23005c;
-  --color-on-secondary-fixed-variant: #5516be;
-  --color-tertiary-fixed: #ffdbcd;
-  --color-tertiary-fixed-dim: #ffb597;
-  --color-on-tertiary-fixed: #360f00;
-  --color-on-tertiary-fixed-variant: #7d2d00;
-  --color-bg-soft-blue: #F0F4FF;
-  --color-bg-soft-purple: #FAF5FF;
-  --color-canvas-gray: #F9FAFB;
-  --color-security-pass: #10B981;
-  --color-security-fail: #EF4444;
-  --color-security-warning: #F59E0B;
 }
 
 :root {
-  --background: #fcf8ff;
-  --foreground: #181445;
+  --background: #f1f2f9;
+  --foreground: #281950;
   --card: #ffffff;
-  --card-foreground: #181445;
+  --card-foreground: #281950;
   --popover: #ffffff;
-  --popover-foreground: #181445;
-  --primary: #4104da;
+  --popover-foreground: #281950;
+  --primary: #7c3aed;
   --primary-foreground: #ffffff;
-  --secondary: #6b38d4;
-  --secondary-foreground: #ffffff;
-  --muted: #f6f2ff;
-  --muted-foreground: #474556;
-  --accent: #efebff;
-  --accent-foreground: #181445;
+  --secondary: #f1f2f9;
+  --secondary-foreground: #281950;
+  --muted: #f1f2f9;
+  --muted-foreground: #5e537c;
+  --accent: #f1f2f9;
+  --accent-foreground: #281950;
   --destructive: #ba1a1a;
-  --border: #c9c4d9;
-  --input: #c9c4d9;
-  --ring: #5a37f1;
-  --chart-1: #4104da;
+  --border: #e7e6f4;
+  --input: #e7e6f4;
+  --ring: #7c3aed;
+  --chart-1: #7c3aed;
   --chart-2: #6b38d4;
   --chart-3: #8455ef;
   --chart-4: #5a38f1;
   --chart-5: #7e2d00;
-  --radius: 0.5rem;
-  --sidebar: #fcf8ff;
-  --sidebar-foreground: #181445;
-  --sidebar-primary: #4104da;
+  --radius: 0.625rem;
+  --sidebar: #f1f2f9;
+  --sidebar-foreground: #281950;
+  --sidebar-primary: #7c3aed;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #efebff;
-  --sidebar-accent-foreground: #181445;
-  --sidebar-border: #c9c4d9;
-  --sidebar-ring: #5a37f1;
+  --sidebar-accent: #f1f2f9;
+  --sidebar-accent-foreground: #281950;
+  --sidebar-border: #e7e6f4;
+  --sidebar-ring: #7c3aed;
 }
 
 .dark {
-  --background: #181445;
+  --background: #191034;
   --foreground: #f3eeff;
   --card: #2d2a5b;
   --card-foreground: #f3eeff;
@@ -144,16 +92,16 @@
   --popover-foreground: #f3eeff;
   --primary: #c8bfff;
   --primary-foreground: #180064;
-  --secondary: #d0bcff;
-  --secondary-foreground: #23005c;
+  --secondary: #2d2a5b;
+  --secondary-foreground: #f3eeff;
   --muted: #2d2a5b;
-  --muted-foreground: #c9c4d9;
+  --muted-foreground: #a39ac1;
   --accent: #2d2a5b;
   --accent-foreground: #f3eeff;
   --destructive: #ffdad6;
-  --border: rgba(201, 196, 217, 0.2);
-  --input: rgba(201, 196, 217, 0.15);
-  --ring: #5a37f1;
+  --border: rgba(231, 230, 244, 0.2);
+  --input: rgba(231, 230, 244, 0.15);
+  --ring: #7c3aed;
   --chart-1: #c8bfff;
   --chart-2: #d0bcff;
   --chart-3: #e5deff;
@@ -165,8 +113,8 @@
   --sidebar-primary-foreground: #180064;
   --sidebar-accent: #2d2a5b;
   --sidebar-accent-foreground: #f3eeff;
-  --sidebar-border: rgba(201, 196, 217, 0.2);
-  --sidebar-ring: #5a37f1;
+  --sidebar-border: rgba(231, 230, 244, 0.2);
+  --sidebar-ring: #7c3aed;
 }
 
 @layer base {
@@ -181,85 +129,11 @@
   }
 }
 
-/* Stitch Utility Classes */
 @layer utilities {
-  .sketchy-border {
-    border: 1px solid rgba(27, 25, 46, 0.1);
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  .font-display {
+    font-family: var(--font-display), 'Source Serif 4', Georgia, serif;
   }
-
-  .sketchy-border-dark {
-    border: 2px solid #1b192e;
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  .font-body {
+    font-family: var(--font-body), 'Inter', system-ui, sans-serif;
   }
-
-  .hard-shadow {
-    box-shadow: 4px 4px 0px 0px #4104da;
-  }
-
-  .hard-shadow:active {
-    box-shadow: 0px 0px 0px 0px #4104da;
-    transform: translate(2px, 2px);
-  }
-
-  .terminal-dots span {
-    width: 8px;
-    height: 8px;
-    border: 1px solid #787588;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 4px;
-  }
-
-  .scribble-underline {
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='10' viewBox='0 0 100 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 8C20 4 40 9 60 5C80 1 98 6 98 6' stroke='%235a37f1' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: bottom;
-    padding-bottom: 4px;
-  }
-
-  .hero-bleed-image {
-    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-  }
-
-  .font-handwriting {
-    font-family: 'Caveat', cursive;
-  }
-
-  .hand-drawn-circle {
-    position: relative;
-  }
-
-  .hand-drawn-circle::after {
-    content: "";
-    position: absolute;
-    top: -10%;
-    left: -10%;
-    width: 120%;
-    height: 120%;
-    border: 2px solid #4104da;
-    border-radius: 48% 52% 55% 45% / 42% 45% 55% 58%;
-    pointer-events: none;
-    opacity: 0.3;
-  }
-
-  .bg-grid {
-    background-image: radial-gradient(circle, #e3dfff 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
-
-  .floating-artifact {
-    animation: float 6s ease-in-out infinite;
-  }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-10px) rotate(5deg); }
-}
-
-@keyframes terminal-reveal {
-  0% { opacity: 0; transform: translateY(5px); }
-  100% { opacity: 1; transform: translateY(0); }
 }

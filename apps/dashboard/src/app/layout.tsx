@@ -1,24 +1,18 @@
 import type { Metadata } from "next";
-import { Libre_Caslon_Text, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Source_Serif_4, Inter } from "next/font/google";
 import "./globals.css";
 
-const libreCaslon = Libre_Caslon_Text({
-  variable: "--font-libre",
+const sourceSerif = Source_Serif_4({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
-const hankenGrotesk = Hanken_Grotesk({
-  variable: "--font-hanken",
+const inter = Inter({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "600", "800"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -34,9 +28,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${libreCaslon.variable} ${hankenGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased scroll-smooth`}
+      className={`${sourceSerif.variable} ${inter.variable} h-full antialiased scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-[#fcf8ff] text-[#181445]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#f1f2f9] text-[#281950]">{children}</body>
     </html>
   );
 }
