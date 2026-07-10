@@ -20,12 +20,12 @@ const FEATURES = [
 const STACKS = ['Next.js', 'Express', 'Python', 'Django', 'Flask', 'React']
 
 const ENTERPRISE_FEATURES = [
-  { title: 'AntiVibe Security', desc: 'Every scan runs in an isolated KVM-style microVM with iptables egress DENY ALL.' },
-  { title: 'Sandbox Isolation', desc: 'Sandboxed execution — untrusted code never touches your production infrastructure.' },
-  { title: 'Guaranteed Response', desc: 'Critical vulnerability alerts delivered within minutes of detection, not hours.' },
-  { title: 'SOC2 Aligned', desc: 'Audit-ready scan logs, encrypted PoC captures, and full egress trail for compliance.' },
-  { title: 'Memory-safe Stack', desc: 'Scanner built on Python 3.12 with asyncio — no buffer overflows, no memory leaks in the pipeline.' },
-  { title: 'CI/CD Integration', desc: 'Drop AntiVibe into your GitHub Actions workflow. Scan on every PR, block on every vuln.' },
+  { title: 'AntiVibe Security', desc: 'Every scan runs in an isolated KVM-style microVM with iptables egress DENY ALL.', img: 'secrets.png' },
+  { title: 'Sandbox Isolation', desc: 'Sandboxed execution — untrusted code never touches your production infrastructure.', img: 'sandbox.png' },
+  { title: 'Guaranteed Response', desc: 'Critical vulnerability alerts delivered within minutes of detection, not hours.', img: 'sql-injection.png' },
+  { title: 'SOC2 Aligned', desc: 'Audit-ready scan logs, encrypted PoC captures, and full egress trail for compliance.', img: 'bola.png' },
+  { title: 'Memory-safe Stack', desc: 'Scanner built on Python 3.12 with asyncio — no buffer overflows, no memory leaks in the pipeline.', img: 'fuzzing.png' },
+  { title: 'CI/CD Integration', desc: 'Drop AntiVibe into your GitHub Actions workflow. Scan on every PR, block on every vuln.', img: 'auto-pr.png' },
 ]
 
 const TRUSTED_BY = ['VibeLabs', 'ModernAI', 'TechCorp', 'SudoApps', 'NeonDev', 'ShipFast']
@@ -291,18 +291,14 @@ export default function Home() {
               <p className="font-body text-[12px] font-semibold tracking-[0.05em] uppercase text-[#c8bfff] mb-4">Enterprise Features</p>
             </div>
 
-            <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {ENTERPRISE_FEATURES.map((feat, i) => (
-                <div key={i} className="flex gap-4 items-start">
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c8bfff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
+                <div key={i} className="flex flex-col gap-3 p-5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden flex items-center justify-center bg-white/5">
+                    <Image src={`/illustrations/${feat.img}`} alt={feat.title} width={56} height={56} className="w-full h-full object-cover" />
                   </div>
-                  <div>
-                    <h4 className="font-body text-[16px] font-semibold mb-1">{feat.title}</h4>
-                    <p className="font-body text-[15px] leading-[24px] text-[#a39ac1]">{feat.desc}</p>
-                  </div>
+                  <h4 className="font-body text-[15px] font-semibold text-white">{feat.title}</h4>
+                  <p className="font-body text-[14px] leading-[22px] text-[#a39ac1]">{feat.desc}</p>
                 </div>
               ))}
             </div>
