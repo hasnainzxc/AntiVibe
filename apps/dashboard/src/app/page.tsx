@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
+import { ScanTracker } from '@/components/scan-tracker'
 
 /* ────────────────────────────────
    AntiVibe Landing Page — Fly.io 1:1
@@ -115,29 +116,18 @@ export default function Home() {
                 {loading ? (<><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Scanning...</>) : (<>Scan your repo<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></>)}
               </button>
             </div>
-            {error && <div className="mt-4 rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm font-body text-red-700 max-w-[480px] mx-auto">{error}</div>}
-            {status && !error && status !== 'idle' && (
-              <div className="mt-4 flex items-center justify-center gap-2 text-sm font-body text-[#5e537c]">
-                <span className={`inline-block w-2 h-2 rounded-full ${status === 'completed' ? 'bg-green-500' : status === 'failed' ? 'bg-red-500' : 'bg-amber-400 animate-pulse'}`} />
-                <span className="font-medium">{status}</span>
-                {scanId && <span className="text-xs opacity-60 font-mono">ID: {scanId}</span>}
-              </div>
-            )}
-            {findings && findings.length > 0 && (
-              <div className="mt-6 space-y-3 text-left max-w-[560px] mx-auto">
-                <h3 className="font-display text-[22px] font-medium text-[#281950] text-center">Findings ({findings.length})</h3>
-                {findings.map((f: any, i: number) => (
-                  <div key={i} className="rounded-xl bg-white/80 backdrop-blur-sm border border-[#e7e6f4] p-4">
-                    <pre className="text-xs overflow-auto whitespace-pre-wrap font-mono text-[#5e537c]">{JSON.stringify(f, null, 2)}</pre>
-                  </div>
-                ))}
-              </div>
-            )}
-            {findings && findings.length === 0 && status === 'completed' && (
-              <div className="mt-4 rounded-xl bg-green-50 border border-green-100 px-4 py-3 text-sm font-body text-green-700 max-w-[480px] mx-auto">No findings — scan completed clean.</div>
-            )}
           </div>
         </section>
+
+        {/* ═══ SCAN TRACKER ═══ */}
+        <ScanTracker
+          target={target}
+          scanId={scanId}
+          status={status}
+          findings={findings}
+          error={error}
+          loading={loading}
+        />
 
         {/* ═══ ALTERNATING TWO-COLUMN SECTIONS ═══ */}
         {ALTERNATING_SECTIONS.map((section, idx) => {
