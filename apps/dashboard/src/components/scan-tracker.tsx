@@ -1,6 +1,7 @@
 'use client'
 
-import { Shield, FileCheck, AlertTriangle, AlertCircle, Info, ChevronRight, Terminal, Loader2 } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Shield, FileCheck, AlertTriangle, AlertCircle, ChevronRight, Terminal, Loader2, Timer, Clock } from 'lucide-react'
 import { FindingCard } from './finding-card'
 import Image from 'next/image'
 
@@ -11,14 +12,6 @@ const STAGES = [
   { key: 'tier2', label: 'Sandbox + Fuzz', icon: AlertTriangle },
   { key: 'completed', label: 'Completed', icon: FileCheck },
 ]
-
-const STAGE_LOGS: Record<string, string[]> = {
-  queued: ['Connecting to scan orchestrator...', 'Allocating sandbox resources...', 'Queue position: 1'],
-  cloning: ['Cloning repository...', 'Checking out shallow clone (--depth 1)...', 'Indexing file tree...', 'Detecting framework & stack...'],
-  tier1: ['Running AST parsers...', 'Scanning for hardcoded secrets...', 'Entropy analysis on strings...', 'LLM semantic review of configs...', 'Checking security headers...'],
-  tier2: ['Spinning up Fly Machine microVM...', 'Seeding mock database...', 'Forging JWT tokens for dummy tenants...', 'Building route index...', 'Running Strix fuzz agent...', 'Probing endpoints for BOLA/IDOR...'],
-  completed: ['Aggregating findings...', 'Triaging severity levels...', 'Generating remediation patches...', 'Scan complete.'],
-}
 
 const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low', 'info']
 
@@ -49,10 +42,38 @@ interface ScanTrackerProps {
 }
 
 export function ScanTracker({ target, scanId, status, findings, error, loading }: ScanTrackerProps) {
+  const [events, setEvents] = useState<any[]>([])
+  const [eventElapsed, setEventElapsed] = useState<number>(0)
+  const eventsRef = useRef(0)
   const stageIdx = getStageIndex(status)
   const isFailed = status === 'failed'
   const isCompleted = status === 'completed'
   const hasActiveScan = loading || (scanId && !isCompleted && !isFailed)
+
+  // Poll events endpoint when scan is active
+  useEffect(() => {
+    if (!scanId || isCompleted || isFailed) return
+    let cancelled = false
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/scan/events?scan_id=${encodeURIComponent(scanId)}`)
+        if (!res.ok) return
+        const data = await res.json()
+        if (!cancelled && Array.isArray(data) && data.length !== eventsRef.current) {
+          setEvents(data)
+          eventsRef.current = data.length
+          const firstTs = data[0]?.ts
+          const lastTs = data[data.length - 1]?.ts
+          if (firstTs && lastTs) {
+            setEventElapsed(Math.round((new Date(lastTs).getTime() - new Date(firstTs).getTime()) / 1000))
+          }
+        }
+      } catch {}
+    }
+    poll()
+    const interval = setInterval(poll, 2000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [scanId, isCompleted, isFailed])
 
   // Sort findings by severity
   const sortedFindings = findings
@@ -157,51 +178,66 @@ export function ScanTracker({ target, scanId, status, findings, error, loading }
           </div>
         </div>
 
-        {/* ── Terminal Log ── */}
+        {/* ── Real-time Event Log ── */}
         {(hasActiveScan || isCompleted || isFailed) && (
           <div className="px-6 pb-5">
             <div className="rounded-xl bg-[#1e1b2e] border border-white/10 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Terminal className="w-3.5 h-3.5 text-[#c8bfff]" />
-                <span className="font-mono text-[11px] text-[#c8bfff] uppercase tracking-wider">Scan Log</span>
+              {/* Header: timer + stage */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Terminal className="w-3.5 h-3.5 text-[#c8bfff]" />
+                  <span className="font-mono text-[11px] text-[#c8bfff] uppercase tracking-wider">Scan Log</span>
+                </div>
+                <div className="flex items-center gap-3 font-mono text-[11px] text-white/40">
+                  {eventElapsed > 0 && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {eventElapsed}s
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <Loader2 className={`w-3 h-3 ${hasActiveScan ? 'animate-spin' : ''}`} />
+                    {events.length} events
+                  </span>
+                </div>
               </div>
-              <div className="space-y-1 font-mono text-[12px] leading-[18px]">
-                {(() => {
-                  const logs: string[] = []
-                  const currentStageKey = isFailed ? 'completed' : status ?? 'queued'
-                  const currentIdx = STAGES.findIndex((s) => s.key === currentStageKey)
-                  const effectiveIdx = currentIdx >= 0 ? currentIdx : 0
-                  for (let i = 0; i <= effectiveIdx; i++) {
-                    const key = STAGES[i].key
-                    const stageLogs = STAGE_LOGS[key] || []
-                    if (i < effectiveIdx) {
-                      stageLogs.forEach((line) => logs.push(line))
-                    } else {
-                      // For current stage, show all logs if completed/failed, or partial if active
-                      const showCount = isCompleted || isFailed ? stageLogs.length : Math.max(1, Math.min(stageLogs.length, Math.floor((Date.now() / 2000) % (stageLogs.length + 1))))
-                      stageLogs.slice(0, showCount).forEach((line) => logs.push(line))
-                      if (!isCompleted && !isFailed && showCount < stageLogs.length) {
-                        logs.push(stageLogs[showCount] + '…')
-                      }
-                    }
-                  }
-                  // Deduplicate while preserving order
-                  const seen = new Set<string>()
-                  const unique = logs.filter((l) => {
-                    const base = l.replace(/…$/, '')
-                    if (seen.has(base)) return false
-                    seen.add(base)
-                    return true
-                  })
-                  return unique.map((line, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className="text-[#5046e4] shrink-0 select-none">{'>'}</span>
-                      <span className={line.includes('VULNERABILITY') || line.includes('error') || line.includes('Failed') ? 'text-red-300' : line.includes('complete') || line.includes('Opening PR') || line.includes('Generating fix') ? 'text-green-300' : 'text-white/70'}>
-                        {line}
+
+              {/* Timeline */}
+              <div className="space-y-0.5 font-mono text-[12px] leading-[18px] max-h-[240px] overflow-y-auto">
+                {events.length > 0 ? (
+                  events.map((evt: any, i: number) => (
+                    <div key={i} className="flex items-start gap-2 hover:bg-white/5 px-1 py-0.5 rounded transition-colors">
+                      {/* Stage color dot */}
+                      <span className={`shrink-0 w-1.5 h-1.5 rounded-full mt-[6px] ${
+                        evt.stage === 'failed' || evt.stage === 'error' ? 'bg-red-400' :
+                        evt.stage === 'completed' ? 'bg-green-400' :
+                        evt.stage === 'tier2' ? 'bg-amber-400' :
+                        evt.stage === 'tier1' ? 'bg-violet-400' :
+                        'bg-white/30'
+                      }`} />
+                      {/* Message */}
+                      <span className={`flex-1 ${
+                        evt.stage === 'failed' || evt.stage === 'error' ? 'text-red-300' :
+                        evt.stage === 'completed' ? 'text-green-300' :
+                        'text-white/80'
+                      }`}>
+                        {evt.msg}
                       </span>
+                      {/* Timestamp */}
+                      {evt.ts && (
+                        <span className="text-[10px] text-white/20 shrink-0">
+                          {evt.ts.slice(11, 19)}
+                        </span>
+                      )}
                     </div>
                   ))
-                })()}
+                ) : (
+                  /* Fallback for initial stage when no events yet */
+                  <div className="flex items-start gap-2 px-1 py-0.5">
+                    <span className="text-[#5046e4] shrink-0">{'>'}</span>
+                    <span className="text-white/60">{status === 'queued' ? 'Starting scan...' : `Stage: ${status}...`}</span>
+                  </div>
+                )}
                 {!isCompleted && !isFailed && (
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-[#5046e4] shrink-0">{'>'}</span>

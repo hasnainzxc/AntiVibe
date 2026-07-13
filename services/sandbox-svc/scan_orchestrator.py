@@ -26,6 +26,7 @@ import os
 import time
 import uuid
 from datetime import UTC, datetime
+from typing import Optional
 from urllib.parse import urlparse
 
 import structlog
@@ -36,6 +37,36 @@ from sandbox.local_runner import LocalDockerClient
 from sb_client import get_supabase_client
 from scanner.clone import CloneError, RepoTooLarge
 from scanner.tier1 import run_tier1
+
+# ── In-memory scan event buffer ────────────────────────────────────
+# Stores structured log events emitted during pipeline execution.
+# Events are keyed by scan_id and consumed by the /scan/{id}/events endpoint.
+# Cleared on server restart (acceptable for local dev; production should
+# persist to a table or use realtime subscriptions).
+_scan_events: dict[str, list[dict]] = {}
+
+
+def push_event(scan_id: str, stage: str, message: str, details: Optional[dict] = None) -> None:
+    """Append a timestamped progress event to the in-memory buffer.
+
+    Called from _run_pipeline at each observable transition (stage start,
+    stage end, finding batch detected, sub-step milestone). The dashboard
+    polls /scan/{id}/events to display real-time progress instead of
+    simulated terminal output.
+    """
+    if scan_id not in _scan_events:
+        _scan_events[scan_id] = []
+    _scan_events[scan_id].append({
+        "ts": datetime.now(UTC).isoformat(),
+        "stage": stage,
+        "msg": message,
+        "details": details or {},
+    })
+
+
+def get_events(scan_id: str) -> list[dict]:
+    """Return all buffered events for a scan, ordered chronologically."""
+    return _scan_events.get(scan_id, [])
 
 logger = structlog.get_logger(__name__)
 
@@ -146,23 +177,37 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
                 else:
                     logger.error("scan.db_save_failed", scan_id=scan_id, error=str(e))
 
+    tier1_duration = None
+    tier2_duration = None
+
     try:
         _update_status("cloning")
         logger.info("scan.started", scan_id=scan_id, repo_url=repo_url)
+        push_event(scan_id, "cloning", "Cloning repository...")
+        push_event(scan_id, "cloning", "Detecting framework & stack...", {"progress": "detecting"})
 
         tier1_start = time.monotonic()
+        push_event(scan_id, "tier1", "Tier 1: Running AST parsers...")
         tier1_result = await run_tier1(repo_url)
         tier1_duration = int((time.monotonic() - tier1_start) * 1000)
 
         if tier1_result.get("status") == "error":
             err = tier1_result.get("error", "Tier 1 analysis failed")
             logger.error("scan.tier1_failed", scan_id=scan_id, error=err, duration_ms=tier1_duration)
+            push_event(scan_id, "failed", f"Analysis failed: {err}", {"duration_ms": tier1_duration})
             _update_status("failed", error="Analysis failed")
             return
 
         tier1_findings = tier1_result.get("findings", [])
         stack = tier1_result.get("stack", "")
         repo_path = tier1_result.get("repo", "")
+
+        push_event(scan_id, "tier1",
+            f"Tier 1 complete: {len(tier1_findings)} findings, {tier1_duration}ms",
+            {"finding_count": len(tier1_findings), "duration_ms": tier1_duration, "stack": stack})
+
+        if stack and len(tier1_findings) > 0:
+            push_event(scan_id, "tier1", f"Severity breakdown — critical={sum(1 for f in tier1_findings if f.get('severity') == 'critical')}, high={sum(1 for f in tier1_findings if f.get('severity') == 'high')}, medium={sum(1 for f in tier1_findings if f.get('severity') == 'medium')}")
 
         llm_usage = tier1_result.get("llm_usage", {})
         if llm_usage:
@@ -185,6 +230,8 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
             else:
                 logger.info("scan.tier2_start", scan_id=scan_id, stack=stack)
                 _update_status("tier2")
+                push_event(scan_id, "tier2", "Tier 2: Spinning up sandbox...")
+                push_event(scan_id, "tier2", "Forging JWT tokens for dummy tenants...", {"progress": "jwt-forge"})
                 tier2_start = time.monotonic()
 
                 try:
@@ -201,6 +248,9 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
 
                     if tier2_result.status == "complete":
                         tier2_findings = _serialize_tier2_result(tier2_result)
+                        push_event(scan_id, "tier2",
+                            f"Tier 2 complete: {len(tier2_findings)} routes found, {tier2_duration}ms",
+                            {"finding_count": len(tier2_findings), "duration_ms": tier2_duration})
                         logger.info(
                             "scan.tier2_complete",
                             scan_id=scan_id,
@@ -208,6 +258,9 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
                             duration_ms=tier2_duration,
                         )
                     else:
+                        push_event(scan_id, "tier2",
+                            f"Tier 2 degraded: {tier2_result.status} — {tier2_result.error}",
+                            {"status": tier2_result.status, "error": tier2_result.error})
                         logger.warning(
                             "scan.tier2_degraded",
                             scan_id=scan_id,
@@ -216,12 +269,17 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
                             duration_ms=tier2_duration,
                         )
                 except Exception as e:
+                    push_event(scan_id, "tier2", f"Tier 2 error: {str(e)}", {"error": str(e)})
                     logger.warning("scan.tier2_exception", scan_id=scan_id, error=str(e))
         else:
+            push_event(scan_id, "tier2", f"Skipping sandbox for {stack or 'unsupported'} stack")
             logger.info("scan.tier2_skipped", scan_id=scan_id, stack=stack or "none")
 
         total_findings = len(tier1_findings) + len(tier2_findings)
         total_duration = int((time.monotonic() - start_time) * 1000)
+        push_event(scan_id, "completed",
+            f"Scan complete: {total_findings} findings in {total_duration}ms",
+            {"total_findings": total_findings, "duration_ms": total_duration})
 
         machine_cost_cents = machine_seconds * FLY_MACHINE_COST_PER_SEC * 100
         llm_cost_cents = (llm_tokens_in * LLM_INPUT_COST_PER_M / 1_000_000 + llm_tokens_out * LLM_OUTPUT_COST_PER_M / 1_000_000) * 100
@@ -232,6 +290,8 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
             "tier2_findings": json.dumps(tier2_findings) if tier2_findings else None,
             "total_findings": total_findings,
             "duration_ms": total_duration,
+            "tier1_duration_ms": tier1_duration if tier1_duration else None,
+            "tier2_duration_ms": tier2_duration if tier2_duration else None,
             "stack": stack,
             "status": "completed",
             "cost_cents": total_cost_cents,

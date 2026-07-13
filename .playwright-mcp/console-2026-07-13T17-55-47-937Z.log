@@ -1,0 +1,55 @@
+[     279ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[     375ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[    2878ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   16100ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[   16131ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   16133ms] [LOG] [Fast Refresh] done in 133ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[   16749ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   17497ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   18310ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   18765ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   18967ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   19207ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   19430ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   20940ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   21455ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   21916ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   22592ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[   30111ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[  120288ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[  120289ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  120290ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  121414ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[  122221ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  122376ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  125005ms] [ERROR] Failed to load resource: the server responded with a status of 502 (Bad Gateway) @ http://localhost:3000/api/scan:0
+[  166465ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  166531ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[  169745ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  186875ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  187342ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  187672ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  187891ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  188132ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  188352ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  188570ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  188792ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  189247ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  189722ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[  190162ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/scan:0
+[ 1061960ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1062066ms] [LOG] [Fast Refresh] done in 206ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1073260ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1073799ms] [LOG] [Fast Refresh] done in 424ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1088435ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1088453ms] [LOG] [Fast Refresh] done in 94ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1104529ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1104582ms] [LOG] [Fast Refresh] done in 130ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1123256ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1123513ms] [LOG] [Fast Refresh] done in 190ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1123771ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1123772ms] [LOG] [Fast Refresh] done in 129ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1132202ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1132688ms] [LOG] [Fast Refresh] done in 586ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1186163ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477
+[ 1186268ms] [LOG] [Fast Refresh] done in 205ms @ http://localhost:3000/_next/static/chunks/0c0n_next_dist_1z60tuk._.js:2477

@@ -1,0 +1,336 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - navigation "Logo menu" [ref=f2e3]:
+      - 'link "The Fly.io logo: a stylized white and purple hot air balloon on a deep purple background" [ref=f2e4] [cursor=pointer]':
+        - /url: /
+    - navigation "Main menu" [ref=f2e5]:
+      - generic [ref=f2e6]:
+        - generic [ref=f2e7] [cursor=pointer]:
+          - term [ref=f2e8]: Products
+          - definition:
+            - generic:
+              - generic: Products
+              - link "Machines":
+                - /url: /machines
+              - link "Sprites":
+                - /url: https://sprites.dev
+              - link "Managed Postgres":
+                - /url: /mpg
+              - link "Phoenix.new":
+                - /url: https://phoenix.new/
+            - generic:
+              - generic: Features
+              - link "Private Networking":
+                - /url: /networking
+              - link "Autoscaling":
+                - /url: /autoscaling
+              - link "Zero Downtime Deploys":
+                - /url: /zero-downtime-deploys
+              - link "Granular Routing":
+                - /url: /granular-routing
+              - link "Monitoring":
+                - /url: /monitoring
+        - link "Docs" [ref=f2e9] [cursor=pointer]:
+          - /url: /docs/
+        - link "Customers" [ref=f2e10] [cursor=pointer]:
+          - /url: /customer-stories
+        - link "Pricing" [ref=f2e11] [cursor=pointer]:
+          - /url: /pricing/
+        - generic [ref=f2e12] [cursor=pointer]:
+          - term [ref=f2e13]: Articles
+          - definition:
+            - link "Blog":
+              - /url: /blog/
+            - link "Sprites":
+              - /url: /sprites-blog/
+            - link "Infra Log":
+              - /url: /infra-log/
+            - link "Phoenix Files":
+              - /url: /phoenix-files/
+            - link "Laravel Bytes":
+              - /url: /laravel-bytes/
+            - link "Ruby Dispatch":
+              - /url: /ruby-dispatch/
+            - link "Django Beats":
+              - /url: /django-beats/
+            - link "JavaScript Journal":
+              - /url: /javascript-journal/
+        - link "Community" [ref=f2e14] [cursor=pointer]:
+          - /url: https://community.fly.io
+        - link "Status" [ref=f2e15] [cursor=pointer]:
+          - /url: https://status.flyio.net
+      - generic [ref=f2e16]:
+        - link "Sign In" [ref=f2e17] [cursor=pointer]:
+          - /url: /app/sign-in
+        - link "Get Started" [ref=f2e18] [cursor=pointer]:
+          - /url: /app/sign-up
+  - generic [ref=f2e19]:
+    - main [ref=f2e21]:
+      - generic [ref=f2e26]:
+        - heading [level=1] [ref=f2e27]:
+          - text: Build fast. Run any code
+          - emphasis [ref=f2e28]: fearlessly.
+        - paragraph [ref=f2e32]: The platform for devs who just want to ship. Powered by sandboxes that let you deploy any code with confidence.
+        - link [ref=f2e33] [cursor=pointer]:
+          - /url: /app/sign-up
+      - generic [ref=f2e43]:
+        - heading "Modern Compute Without the Complexity" [level=2] [ref=f2e44]
+        - paragraph [ref=f2e45]: For builders who need compute that keeps up with their ideas, Fly Machines are hardware-virtualized containers that launch instantly and run only when you need them. Deploy an app in minutes or run untrusted code in isolated sandboxes.
+      - generic [ref=f2e50]:
+        - heading "Sandboxes That Feel Like a Superpower" [level=2] [ref=f2e51]
+        - paragraph [ref=f2e52]: Spin up hardware-isolated sandboxes for running AI-generated code in complete safety. Every Sprite is a self-contained environment, ready for action in under a second. Checkpoint your entire environment, run anything, and restore if you break something. Pay only for actual CPU and memory consumption, down to the second.
+        - link [ref=f2e53] [cursor=pointer]:
+          - /url: https://sprites.dev/
+      - generic [ref=f2e62]:
+        - heading "Storage That Keeps Up" [level=2] [ref=f2e63]
+        - paragraph [ref=f2e64]: Fast local NVMe for low-latency work, plus global, durable object storage for data that needs to stick around. Snapshot environments, persist state, and scale storage right alongside your sandboxes.
+      - generic [ref=f2e67]:
+        - heading "Built-In Private Networking" [level=2] [ref=f2e68]
+        - paragraph [ref=f2e69]: Private networks per sandbox, granular routing, and end-to-end encryption — all automatic.
+      - list [ref=f2e74]:
+        - listitem [ref=f2e75]:
+          - generic [ref=f2e77]:
+            - heading "VMs That Do Everything You Need" [level=2] [ref=f2e78]
+            - paragraph [ref=f2e79]: "Everything runs on Machines: your apps, agents that scale to millions of users, and AI-generated code."
+        - listitem [ref=f2e80]:
+          - generic [ref=f2e82]:
+            - heading "Fork Off VMs Like They're Processes" [level=2] [ref=f2e83]
+            - paragraph [ref=f2e84]: Fly Machines start fast enough to handle HTTP requests, run only when you need them, and scale into tens of thousands of instances.
+        - listitem [ref=f2e85]:
+          - generic [ref=f2e87]:
+            - heading "Built for Distributed Systems" [level=2] [ref=f2e88]
+            - paragraph [ref=f2e89]: Run clustered databases like Cockroach, globally-distributed Postgres, and modern RPC systems like Elixir FLAME. No Terraform required.
+        - listitem [ref=f2e90]:
+          - generic [ref=f2e92]:
+            - heading "Get Right in Your Users' Faces" [level=2] [ref=f2e93]
+            - paragraph [ref=f2e94]: Deploy in 18 regions, from Sydney to São Paulo. Sub-100ms response times give users that native-app feel, no matter where they are.
+      - generic [ref=f2e97]:
+        - generic [ref=f2e99]:
+          - heading "Use the Tech You Love" [level=2] [ref=f2e100]
+          - paragraph [ref=f2e101]: "Build with your favorite framework. No Dockerfile? No problem: our CLI generates containers for most popular frameworks, including Rails, Phoenix, Django, Node, Laravel, and .NET."
+          - link [ref=f2e102] [cursor=pointer]:
+            - /url: /docs/speedrun/
+        - list [ref=f2e108]:
+          - listitem [ref=f2e109]:
+            - link "Phoenix Framework" [ref=f2e110] [cursor=pointer]:
+              - /url: /phoenix/
+          - listitem [ref=f2e112]:
+            - link "SvelteKit" [ref=f2e113] [cursor=pointer]:
+              - /url: /sveltekit/
+          - listitem [ref=f2e115]:
+            - link "Ruby on Rails" [ref=f2e116] [cursor=pointer]:
+              - /url: /rails/
+          - listitem [ref=f2e118]:
+            - link "Docker" [ref=f2e119] [cursor=pointer]:
+              - /url: /docker
+          - listitem [ref=f2e121]:
+            - link "Django" [ref=f2e122] [cursor=pointer]:
+              - /url: /django/
+          - listitem [ref=f2e124]:
+            - link "Laravel" [ref=f2e125] [cursor=pointer]:
+              - /url: /laravel/
+          - listitem [ref=f2e127]:
+            - link "NextJS" [ref=f2e128] [cursor=pointer]:
+              - /url: /nextjs/
+      - generic [ref=f2e132]:
+        - heading "Agents Run Better on Sprites" [level=2] [ref=f2e133]
+        - paragraph [ref=f2e134]: You don't have to be a cloud guru to build scalable agents. Run every instance on its own VM with dedicated CPU, memory, networking, and a private filesystem. Forget wrestling with shared runtimes or noisy neighbors. Get persistent brains when you need them, ephemeral workers when you don't.
+        - link [ref=f2e135] [cursor=pointer]:
+          - /url: https://sprites.dev/
+      - generic [ref=f2e141]:
+        - generic [ref=f2e144]:
+          - heading "Trusted by teams at" [level=2] [ref=f2e145]
+          - generic [ref=f2e146]:
+            - list [ref=f2e147]:
+              - listitem [ref=f2e148]:
+                - link "Builder.io Builder.io" [ref=f2e149] [cursor=pointer]:
+                  - /url: https://builder.io
+                  - generic [ref=f2e150]: Builder.io
+                  - img "Builder.io" [ref=f2e151]
+              - listitem [ref=f2e152]:
+                - link "Mercor Mercor" [ref=f2e153] [cursor=pointer]:
+                  - /url: https://www.mercor.com
+                  - generic [ref=f2e154]: Mercor
+                  - img "Mercor" [ref=f2e155]
+              - listitem [ref=f2e156]:
+                - link "Cogram Cogram" [ref=f2e157] [cursor=pointer]:
+                  - /url: https://cogram.com
+                  - generic [ref=f2e158]: Cogram
+                  - img "Cogram" [ref=f2e159]
+              - listitem [ref=f2e160]:
+                - link "Mocha Mocha" [ref=f2e161] [cursor=pointer]:
+                  - /url: https://getmocha.com
+                  - generic [ref=f2e162]: Mocha
+                  - img "Mocha" [ref=f2e163]
+              - listitem [ref=f2e164]:
+                - link "Context Context" [ref=f2e165] [cursor=pointer]:
+                  - /url: https://context.ai
+                  - generic [ref=f2e166]: Context
+                  - img "Context" [ref=f2e167]
+              - listitem [ref=f2e168]:
+                - link "Reflex Reflex" [ref=f2e169] [cursor=pointer]:
+                  - /url: https://reflex.dev
+                  - generic [ref=f2e170]: Reflex
+                  - img "Reflex" [ref=f2e171]
+              - listitem [ref=f2e172]:
+                - link "Beam Beam" [ref=f2e173] [cursor=pointer]:
+                  - /url: https://www.beam.cloud
+                  - generic [ref=f2e174]: Beam
+                  - img "Beam" [ref=f2e175]
+              - listitem [ref=f2e176]:
+                - link "Imbue Imbue" [ref=f2e177] [cursor=pointer]:
+                  - /url: https://imbue.com
+                  - generic [ref=f2e178]: Imbue
+                  - img "Imbue" [ref=f2e179]
+              - listitem [ref=f2e180]:
+                - link "Supabase Supabase" [ref=f2e181] [cursor=pointer]:
+                  - /url: https://supabase.com
+                  - generic [ref=f2e182]: Supabase
+                  - img "Supabase" [ref=f2e183]
+              - listitem [ref=f2e184]:
+                - link "Webhound Webhound" [ref=f2e185] [cursor=pointer]:
+                  - /url: https://www.webhound.ai
+                  - generic [ref=f2e186]: Webhound
+                  - img "Webhound" [ref=f2e187]
+              - listitem [ref=f2e188]:
+                - link "Hercules Hercules" [ref=f2e189] [cursor=pointer]:
+                  - /url: https://www.hercules.ai
+                  - generic [ref=f2e190]: Hercules
+                  - img "Hercules" [ref=f2e191]
+            - list [ref=f2e192]:
+              - listitem [ref=f2e193]:
+                - link [ref=f2e194] [cursor=pointer]:
+                  - /url: https://builder.io
+                  - generic [ref=f2e195]: Builder.io
+              - listitem [ref=f2e197]:
+                - link [ref=f2e198] [cursor=pointer]:
+                  - /url: https://www.mercor.com
+                  - generic [ref=f2e199]: Mercor
+              - listitem [ref=f2e201]:
+                - link [ref=f2e202] [cursor=pointer]:
+                  - /url: https://cogram.com
+                  - generic [ref=f2e203]: Cogram
+              - listitem [ref=f2e205]:
+                - link [ref=f2e206] [cursor=pointer]:
+                  - /url: https://getmocha.com
+                  - generic [ref=f2e207]: Mocha
+              - listitem [ref=f2e209]:
+                - link [ref=f2e210] [cursor=pointer]:
+                  - /url: https://context.ai
+                  - generic [ref=f2e211]: Context
+              - listitem [ref=f2e213]:
+                - link [ref=f2e214] [cursor=pointer]:
+                  - /url: https://reflex.dev
+                  - generic [ref=f2e215]: Reflex
+              - listitem [ref=f2e217]:
+                - link [ref=f2e218] [cursor=pointer]:
+                  - /url: https://www.beam.cloud
+                  - generic [ref=f2e219]: Beam
+              - listitem [ref=f2e221]:
+                - link [ref=f2e222] [cursor=pointer]:
+                  - /url: https://imbue.com
+                  - generic [ref=f2e223]: Imbue
+              - listitem [ref=f2e225]:
+                - link [ref=f2e226] [cursor=pointer]:
+                  - /url: https://supabase.com
+                  - generic [ref=f2e227]: Supabase
+              - listitem [ref=f2e229]:
+                - link [ref=f2e230] [cursor=pointer]:
+                  - /url: https://www.webhound.ai
+                  - generic [ref=f2e231]: Webhound
+              - listitem [ref=f2e233]:
+                - link [ref=f2e234] [cursor=pointer]:
+                  - /url: https://www.hercules.ai
+                  - generic [ref=f2e235]: Hercules
+        - generic [ref=f2e237]:
+          - generic [ref=f2e239]:
+            - heading "Enterprise-Ready" [level=2] [ref=f2e240]
+            - paragraph [ref=f2e241]: Apps running on Fly Machines are KVM hardware-isolated, built on a memory-safe stack and running directly on our own metal.
+            - generic [ref=f2e242]:
+              - link [ref=f2e243] [cursor=pointer]:
+                - /url: /enterprise
+              - link [ref=f2e248] [cursor=pointer]:
+                - /url: /security
+          - list [ref=f2e254]:
+            - listitem [ref=f2e258]: Single Sign-On
+            - listitem [ref=f2e265]: Guaranteed Support Response Times
+            - listitem [ref=f2e272]: SOC2 Type 2 Attested
+            - listitem [ref=f2e279]: Memory-safe Rust and Go stack
+            - listitem [ref=f2e286]: CI/CD Integration
+      - generic [ref=f2e298]:
+        - heading "Build Whatever You Can Think Up (and Give Your Users The Same Power)" [level=2] [ref=f2e299]
+        - paragraph [ref=f2e300]: Fly.io is the platform that gets out of your way, running on the infrastructure that lets you run any code without fear. See how fast you can get started.
+        - link [ref=f2e301] [cursor=pointer]:
+          - /url: https://sprites.dev/
+    - alert
+    - alert
+    - alert
+    - alert
+    - alert
+  - contentinfo [ref=f2e306]:
+    - generic [ref=f2e307]:
+      - link "Fly" [ref=f2e308] [cursor=pointer]:
+        - /url: /
+      - generic [ref=f2e309]:
+        - generic [ref=f2e310]:
+          - term [ref=f2e311]: Company
+          - definition [ref=f2e312]:
+            - link "About" [ref=f2e313] [cursor=pointer]:
+              - /url: /about/
+            - link "Pricing" [ref=f2e314] [cursor=pointer]:
+              - /url: /pricing/
+            - link "Jobs" [ref=f2e315] [cursor=pointer]:
+              - /url: /jobs/
+        - generic [ref=f2e316]:
+          - term [ref=f2e317]: Articles
+          - definition [ref=f2e318]:
+            - link "Blog" [ref=f2e319] [cursor=pointer]:
+              - /url: /blog/
+            - link "Sprites" [ref=f2e320] [cursor=pointer]:
+              - /url: /sprites-blog/
+            - link "Infra Log" [ref=f2e321] [cursor=pointer]:
+              - /url: /infra-log/
+            - link "Phoenix Files" [ref=f2e322] [cursor=pointer]:
+              - /url: /phoenix-files/
+            - link "Laravel Bytes" [ref=f2e323] [cursor=pointer]:
+              - /url: /laravel-bytes/
+            - link "Ruby Dispatch" [ref=f2e324] [cursor=pointer]:
+              - /url: /ruby-dispatch/
+            - link "Django Beats" [ref=f2e325] [cursor=pointer]:
+              - /url: /django-beats/
+            - link "JavaScript Journal" [ref=f2e326] [cursor=pointer]:
+              - /url: /javascript-journal/
+        - generic [ref=f2e327]:
+          - term [ref=f2e328]: Resources
+          - definition [ref=f2e329]:
+            - link "Docs" [ref=f2e330] [cursor=pointer]:
+              - /url: /docs/
+            - link "Customers" [ref=f2e331] [cursor=pointer]:
+              - /url: /customers
+            - link "Support" [ref=f2e332] [cursor=pointer]:
+              - /url: /docs/support/
+            - link "Support Metrics" [ref=f2e333] [cursor=pointer]:
+              - /url: /support/
+            - link "Status" [ref=f2e334] [cursor=pointer]:
+              - /url: https://status.flyio.net/
+        - generic [ref=f2e335]:
+          - term [ref=f2e336]: Contact
+          - definition [ref=f2e337]:
+            - link "GitHub" [ref=f2e338] [cursor=pointer]:
+              - /url: https://github.com/superfly/
+            - link "Twitter" [ref=f2e339] [cursor=pointer]:
+              - /url: https://twitter.com/flydotio
+            - link "Community" [ref=f2e340] [cursor=pointer]:
+              - /url: https://community.fly.io/
+        - generic [ref=f2e341]:
+          - term [ref=f2e342]: Legal
+          - definition [ref=f2e343]:
+            - link "Security" [ref=f2e344] [cursor=pointer]:
+              - /url: /security/
+            - link "Privacy policy" [ref=f2e345] [cursor=pointer]:
+              - /url: /legal/privacy-policy
+            - link "Terms of service" [ref=f2e346] [cursor=pointer]:
+              - /url: /legal/terms-of-service
+            - link "Acceptable Use Policy" [ref=f2e347] [cursor=pointer]:
+              - /url: /legal/acceptable-use-policy
+    - paragraph [ref=f2e348]: Copyright © 2026 Fly.io

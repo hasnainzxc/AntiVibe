@@ -16,7 +16,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from models import ScanRequest
-from scan_orchestrator import get_scan, get_scan_status, start_scan
+from scan_orchestrator import get_events, get_scan, get_scan_status, start_scan
 
 app = FastAPI(title="AntiVibe Sandbox Service", version="0.1.0")
 
@@ -33,6 +33,11 @@ async def create_scan(req: ScanRequest):
         body, status_code = result
         return JSONResponse(content=body, status_code=status_code)
     return result
+
+
+@app.get("/scan/{scan_id}/events")
+async def read_scan_events(scan_id: str):
+    return get_events(scan_id)
 
 
 @app.get("/scan/{scan_id}")

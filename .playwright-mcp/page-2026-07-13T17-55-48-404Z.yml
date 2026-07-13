@@ -1,0 +1,204 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]: AntiVibe
+        - generic [ref=e10]:
+          - link "Products" [ref=e11] [cursor=pointer]:
+            - /url: "#products"
+          - link "Docs" [ref=e12] [cursor=pointer]:
+            - /url: "#docs"
+          - link "Pricing" [ref=e13] [cursor=pointer]:
+            - /url: "#pricing"
+        - generic [ref=e14]:
+          - button "Sign In" [ref=e15]
+          - button "Get Started" [ref=e16]
+    - main [ref=e17]:
+      - generic [ref=e20]:
+        - heading [level=1] [ref=e21]:
+          - text: Stop the bad vibes.
+          - emphasis [ref=e22]: in your AI code.
+        - paragraph [ref=e23]: For builders who ship fast and need security that keeps up. Paste a repo URL, get a full audit with patches you can merge.
+        - generic [ref=e24]:
+          - textbox "github.com/user/repo" [ref=e25]
+          - button "Scan your repo" [disabled] [ref=e26]
+      - generic [ref=e30]:
+        - heading "Ready to scan" [level=3] [ref=e32]
+        - paragraph [ref=e33]:
+          - text: Paste a repo URL above and hit
+          - strong [ref=e34]: Scan your repo
+          - text: to start an audit.
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - heading "Scans That Find Everything You Need" [level=2] [ref=e38]
+          - paragraph [ref=e39]: Spin up isolated sandboxes for running AI-generated code in complete safety. Every scan is a self-contained audit, ready in minutes. Checkpoint, test, and pay only for actual scan time.
+          - link "Learn More" [ref=e41] [cursor=pointer]:
+            - /url: "#"
+        - img "Scans That Find Everything You Need" [ref=e46]
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - heading "Secrets Detection That Keeps Up" [level=2] [ref=e50]
+          - paragraph [ref=e51]: Fast regex patterns for low-latency detection, plus entropy analysis and LLM verification for data that needs deeper context. Snapshot environments, persist findings, and scale alongside your codebase.
+          - link "Learn More" [ref=e53] [cursor=pointer]:
+            - /url: "#"
+        - img "Secrets Detection That Keeps Up" [ref=e58]
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - heading "Built-In JWT Forgery" [level=2] [ref=e62]
+          - paragraph [ref=e63]: Private token forging per sandbox, granular endpoint probing, and identity-based attack simulation — all automatic. We forge tokens for dummy tenants and probe cross-tenant access vectors.
+          - link "Learn More" [ref=e65] [cursor=pointer]:
+            - /url: "#"
+        - img "Built-In JWT Forgery" [ref=e70]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - heading "Auto-PRs That Do Everything You Need" [level=2] [ref=e74]
+          - paragraph [ref=e75]: "Everything runs on AntiVibe: your scans, agents that scale to millions of lines, and AI-generated code. We create the branch, write the patch, and open the PR — you just review and merge."
+          - link "Learn More" [ref=e77] [cursor=pointer]:
+            - /url: "#"
+        - img "Auto-PRs That Do Everything You Need" [ref=e82]
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - heading "Fork Off Scans Like They’re Processes" [level=2] [ref=e86]
+          - paragraph [ref=e87]: AntiVibe scans start fast enough to run on every PR, execute only when you need them, and scale into tens of thousands of lines. No Terraform required to find what breaks.
+          - link "Learn More" [ref=e89] [cursor=pointer]:
+            - /url: "#"
+        - img "Fork Off Scans Like They’re Processes" [ref=e94]
+      - generic [ref=e96]:
+        - generic [ref=e97]:
+          - heading "Built for BOLA Detection" [level=2] [ref=e98]
+          - paragraph [ref=e99]: Run clustered endpoint fuzzing, globally-distributed route discovery, and modern auth-pivot systems. AntiVibe pivots on 403s instead of giving up — finding the complex logic flaws static tools miss.
+          - link "Learn More" [ref=e101] [cursor=pointer]:
+            - /url: "#"
+        - img "Built for BOLA Detection" [ref=e106]
+      - generic [ref=e108]:
+        - heading "Scan the Stack You Love" [level=2] [ref=e109]
+        - paragraph [ref=e110]: Build with your favorite framework. We detect and scan it automatically.
+        - generic [ref=e112]:
+          - generic [ref=e113] [cursor=pointer]: Next.js
+          - generic [ref=e114] [cursor=pointer]: Express
+          - generic [ref=e115] [cursor=pointer]: Python
+          - generic [ref=e116] [cursor=pointer]: Django
+          - generic [ref=e117] [cursor=pointer]: Flask
+          - generic [ref=e118] [cursor=pointer]: React
+      - generic [ref=e120]:
+        - paragraph [ref=e121]: Trusted by teams at
+        - generic [ref=e122]:
+          - generic [ref=e123]: VibeLabs
+          - generic [ref=e124]: ModernAI
+          - generic [ref=e125]: TechCorp
+          - generic [ref=e126]: SudoApps
+          - generic [ref=e127]: NeonDev
+          - generic [ref=e128]: ShipFast
+      - generic [ref=e130]:
+        - generic [ref=e131]:
+          - heading "Enterprise-Ready" [level=2] [ref=e132]
+          - paragraph [ref=e133]: Apps running on AntiVibe are isolated in KVM-style sandboxes, built on a memory-safe stack and running directly on our own infrastructure.
+          - paragraph [ref=e135]: Enterprise Features
+        - generic [ref=e136]:
+          - generic [ref=e137]:
+            - img "AntiVibe Security" [ref=e139]
+            - heading "AntiVibe Security" [level=4] [ref=e140]
+            - paragraph [ref=e141]: Every scan runs in an isolated KVM-style microVM with iptables egress DENY ALL.
+          - generic [ref=e142]:
+            - img "Sandbox Isolation" [ref=e144]
+            - heading "Sandbox Isolation" [level=4] [ref=e145]
+            - paragraph [ref=e146]: Sandboxed execution — untrusted code never touches your production infrastructure.
+          - generic [ref=e147]:
+            - img "Guaranteed Response" [ref=e149]
+            - heading "Guaranteed Response" [level=4] [ref=e150]
+            - paragraph [ref=e151]: Critical vulnerability alerts delivered within minutes of detection, not hours.
+          - generic [ref=e152]:
+            - img "SOC2 Aligned" [ref=e154]
+            - heading "SOC2 Aligned" [level=4] [ref=e155]
+            - paragraph [ref=e156]: Audit-ready scan logs, encrypted PoC captures, and full egress trail for compliance.
+          - generic [ref=e157]:
+            - img "Memory-safe Stack" [ref=e159]
+            - heading "Memory-safe Stack" [level=4] [ref=e160]
+            - paragraph [ref=e161]: Scanner built on Python 3.12 with asyncio — no buffer overflows, no memory leaks.
+          - generic [ref=e162]:
+            - img "CI/CD Integration" [ref=e164]
+            - heading "CI/CD Integration" [level=4] [ref=e165]
+            - paragraph [ref=e166]: Drop AntiVibe into your GitHub Actions workflow. Scan on every PR, block on every vuln.
+      - generic [ref=e168]:
+        - generic [ref=e169]:
+          - heading "Deep security without the friction." [level=2] [ref=e170]: Deep securitywithout the friction.
+          - paragraph [ref=e171]: Not just a report. We create the branch, write the patch, and open the PR — with full context on every fix.
+          - link "Learn More" [ref=e173] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=e182]:
+          - generic [ref=e183]: "@antivibe/detective-bird running..."
+          - generic [ref=e184]: Analyzing /api/user/v1/profile...
+          - generic [ref=e185]: "VULNERABILITY: Broken Object Level Authorization"
+          - generic [ref=e186]: "Generating fix: auth_middleware.ts..."
+          - generic [ref=e187]: "Opening PR: #402 Fix BOLA vulnerability"
+      - generic [ref=e189]:
+        - heading [level=2] [ref=e190]:
+          - text: Ship Whatever You Can Think Up
+          - emphasis [ref=e191]: (and let us catch what breaks)
+        - paragraph [ref=e192]: AntiVibe is the platform that gets out of your way. Scan any code without fear. See how fast you can ship safely.
+        - button "Spin Up a Scan" [ref=e193]
+    - contentinfo [ref=e196]:
+      - generic [ref=e197]:
+        - generic [ref=e198]:
+          - generic [ref=e199]:
+            - generic [ref=e200]: AntiVibe
+            - paragraph [ref=e205]: Agentic DevSecOps for vibe-coded apps.
+          - generic [ref=e206]:
+            - heading "Company" [level=4] [ref=e207]
+            - list [ref=e208]:
+              - listitem [ref=e209]:
+                - link "About" [ref=e210] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e211]:
+                - link "Pricing" [ref=e212] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e213]:
+                - link "Articles" [ref=e214] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e215]:
+                - link "Blog" [ref=e216] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e217]:
+                - link "Docs" [ref=e218] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e219]:
+            - heading "Resources" [level=4] [ref=e220]
+            - list [ref=e221]:
+              - listitem [ref=e222]:
+                - link "Docs" [ref=e223] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e224]:
+                - link "Customers" [ref=e225] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e226]:
+                - link "Support" [ref=e227] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e228]:
+                - link "Status" [ref=e229] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e230]:
+                - link "GitHub" [ref=e231] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e232]:
+                - link "Twitter" [ref=e233] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e234]:
+                - link "Community" [ref=e235] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e236]:
+            - heading "Legal" [level=4] [ref=e237]
+            - list [ref=e238]:
+              - listitem [ref=e239]:
+                - link "Security" [ref=e240] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e241]:
+                - link "Privacy" [ref=e242] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e243]:
+                - link "Terms of Service" [ref=e244] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e245]:
+                - link "Acceptable Use" [ref=e246] [cursor=pointer]:
+                  - /url: "#"
+        - paragraph [ref=e248]: © 2026 AntiVibe. Isolated, agentic security for modern AI stacks.
+  - button "Open Next.js Dev Tools" [ref=e254] [cursor=pointer]

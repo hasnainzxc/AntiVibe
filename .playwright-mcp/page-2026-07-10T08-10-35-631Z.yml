@@ -1,0 +1,185 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]: AntiVibe
+        - generic [ref=e10]:
+          - link "Products" [ref=e11] [cursor=pointer]:
+            - /url: "#products"
+          - link "Docs" [ref=e12] [cursor=pointer]:
+            - /url: "#docs"
+          - link "Pricing" [ref=e13] [cursor=pointer]:
+            - /url: "#pricing"
+        - generic [ref=e14]:
+          - button "Sign In" [ref=e15]
+          - button "Get Started" [ref=e16]
+    - main [ref=e17]:
+      - generic [ref=e20]:
+        - heading [level=1] [ref=e21]:
+          - text: Stop the bad vibes.
+          - emphasis [ref=e22]: in your AI code.
+        - paragraph [ref=e23]: For builders who ship fast and need security that keeps up. Paste a repo URL, get a full audit with patches you can merge.
+        - generic [ref=e24]:
+          - textbox "github.com/user/repo" [ref=e25]
+          - button "Scan your repo" [disabled] [ref=e26]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - paragraph [ref=e32]: The AntiVibe Way
+          - heading [level=2] [ref=e33]:
+            - text: You ship.
+            - emphasis [ref=e34]: We protect and test it.
+          - paragraph [ref=e35]: For builders who need security that keeps up with their ideas. Every scan runs a three-tier pipeline — static analysis, isolated sandboxing, and autonomous fuzz testing. Land patches you can merge in minutes.
+          - link "Check it out!" [ref=e37] [cursor=pointer]:
+            - /url: "#products"
+        - img "AntiVibe Sandbox" [ref=e41]
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - heading [level=2] [ref=e45]:
+            - text: Scans That Find
+            - emphasis [ref=e46]: Everything You Need
+          - paragraph [ref=e47]: Spin up isolated sandboxes for running AI-generated code in complete safety. Every scan is a self-contained audit, ready in minutes. Checkpoint, test, and pay only for actual scan time.
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - heading "Static Semantic Scan" [level=3] [ref=e53]
+            - paragraph [ref=e54]: AST analysis + secret detection with LLM semantic depth. We understand developer intent, not just patterns.
+          - generic [ref=e55]:
+            - heading "Isolated Sandbox" [level=3] [ref=e59]
+            - paragraph [ref=e60]: Spin up your app in an ephemeral microVM with mock seeded DBs. Execute and verify safely in real-time.
+          - generic [ref=e61]:
+            - heading "Agentic Fuzzing" [level=3] [ref=e65]
+            - paragraph [ref=e66]: Our agent forges identities and never stops at a 403. It finds complex logic flaws that static tools miss.
+          - generic [ref=e67]:
+            - heading "Auto-PR Remediation" [level=3] [ref=e71]
+            - paragraph [ref=e72]: Not just a report. We create the branch, write the patch, and open the PR — you just review and merge.
+          - generic [ref=e73]:
+            - heading "JWT Forgery Engine" [level=3] [ref=e77]
+            - paragraph [ref=e78]: Simulates complex identity attacks — forge tokens for dummy tenants, probe cross-tenant access vectors.
+          - generic [ref=e79]:
+            - heading "Secrets Detection" [level=3] [ref=e83]
+            - paragraph [ref=e84]: Regex patterns + entropy analysis + LLM verification. Catches hardcoded API keys, open Firestore rules, CORS wildcards.
+      - generic [ref=e86]:
+        - heading "Scan the Stack You Love" [level=2] [ref=e87]
+        - paragraph [ref=e88]: Build with your favorite framework. We detect and scan it automatically — no config needed.
+        - generic [ref=e89]:
+          - generic [ref=e90] [cursor=pointer]: Next.js
+          - generic [ref=e91] [cursor=pointer]: Express
+          - generic [ref=e92] [cursor=pointer]: Python
+          - generic [ref=e93] [cursor=pointer]: Django
+          - generic [ref=e94] [cursor=pointer]: Flask
+          - generic [ref=e95] [cursor=pointer]: React
+      - generic [ref=e97]:
+        - paragraph [ref=e98]: Trusted by teams at
+        - generic [ref=e99]:
+          - generic [ref=e100]: VibeLabs
+          - generic [ref=e101]: ModernAI
+          - generic [ref=e102]: TechCorp
+          - generic [ref=e103]: SudoApps
+          - generic [ref=e104]: NeonDev
+          - generic [ref=e105]: ShipFast
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - heading "Enterprise-Ready" [level=2] [ref=e109]
+          - paragraph [ref=e110]: Apps running on AntiVibe are isolated in KVM-style sandboxes, built on a memory-safe stack and running directly on our own infrastructure.
+          - paragraph [ref=e112]: Enterprise Features
+        - generic [ref=e113]:
+          - generic [ref=e119]:
+            - heading "AntiVibe Security" [level=4] [ref=e120]
+            - paragraph [ref=e121]: Every scan runs in an isolated KVM-style microVM with iptables egress DENY ALL.
+          - generic [ref=e127]:
+            - heading "Sandbox Isolation" [level=4] [ref=e128]
+            - paragraph [ref=e129]: Sandboxed execution — untrusted code never touches your production infrastructure.
+          - generic [ref=e135]:
+            - heading "Guaranteed Response" [level=4] [ref=e136]
+            - paragraph [ref=e137]: Critical vulnerability alerts delivered within minutes of detection, not hours.
+          - generic [ref=e143]:
+            - heading "SOC2 Aligned" [level=4] [ref=e144]
+            - paragraph [ref=e145]: Audit-ready scan logs, encrypted PoC captures, and full egress trail for compliance.
+          - generic [ref=e151]:
+            - heading "Memory-safe Stack" [level=4] [ref=e152]
+            - paragraph [ref=e153]: Scanner built on Python 3.12 with asyncio — no buffer overflows, no memory leaks in the pipeline.
+          - generic [ref=e159]:
+            - heading "CI/CD Integration" [level=4] [ref=e160]
+            - paragraph [ref=e161]: Drop AntiVibe into your GitHub Actions workflow. Scan on every PR, block on every vuln.
+      - generic [ref=e163]:
+        - generic [ref=e164]:
+          - heading "Deep security without the friction." [level=2] [ref=e165]: Deep securitywithout the friction.
+          - paragraph [ref=e166]: Not just a report. We create the branch, write the patch, and open the PR — with full context on every fix.
+          - link "Learn More" [ref=e168] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=e177]:
+          - generic [ref=e178]: "@antivibe/detective-bird running..."
+          - generic [ref=e179]: Analyzing /api/user/v1/profile...
+          - generic [ref=e180]: "VULNERABILITY: Broken Object Level Authorization"
+          - generic [ref=e181]: "Generating fix: auth_middleware.ts..."
+          - generic [ref=e182]: "Opening PR: #402 Fix BOLA vulnerability"
+      - generic [ref=e184]:
+        - heading [level=2] [ref=e185]:
+          - text: Ship Whatever You Can Think Up
+          - emphasis [ref=e186]: (and let us catch what breaks)
+        - paragraph [ref=e187]: AntiVibe is the platform that gets out of your way. Scan any code without fear. See how fast you can ship safely.
+        - button "Spin Up a Scan" [ref=e188]
+    - contentinfo [ref=e191]:
+      - generic [ref=e192]:
+        - generic [ref=e193]:
+          - generic [ref=e194]:
+            - generic [ref=e195]: AntiVibe
+            - paragraph [ref=e200]: Agentic DevSecOps for vibe-coded apps.
+          - generic [ref=e201]:
+            - heading "Company" [level=4] [ref=e202]
+            - list [ref=e203]:
+              - listitem [ref=e204]:
+                - link "About" [ref=e205] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e206]:
+                - link "Pricing" [ref=e207] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e208]:
+                - link "Articles" [ref=e209] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e210]:
+                - link "Blog" [ref=e211] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e212]:
+                - link "Docs" [ref=e213] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e214]:
+            - heading "Resources" [level=4] [ref=e215]
+            - list [ref=e216]:
+              - listitem [ref=e217]:
+                - link "Docs" [ref=e218] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e219]:
+                - link "Customers" [ref=e220] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e221]:
+                - link "Support" [ref=e222] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e223]:
+                - link "Status" [ref=e224] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e225]:
+                - link "GitHub" [ref=e226] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e227]:
+                - link "Twitter" [ref=e228] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e229]:
+                - link "Community" [ref=e230] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e231]:
+            - heading "Legal" [level=4] [ref=e232]
+            - list [ref=e233]:
+              - listitem [ref=e234]:
+                - link "Security" [ref=e235] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e236]:
+                - link "Privacy" [ref=e237] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e238]:
+                - link "Terms of Service" [ref=e239] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e240]:
+                - link "Acceptable Use" [ref=e241] [cursor=pointer]:
+                  - /url: "#"
+        - paragraph [ref=e243]: © 2026 AntiVibe. Isolated, agentic security for modern AI stacks.
+  - button "Open Next.js Dev Tools" [ref=e249] [cursor=pointer]
