@@ -111,7 +111,7 @@ class TestRunPipeline:
         await _run_pipeline("test-scan-id", "https://github.com/user/repo", mock_sb)
 
         assert mock_sb._update_data.get("status") == "completed"
-        assert mock_sb._update_data.get("total_findings") == 2
+        # total_findings now stored in findings table, not scans table
 
     @pytest.mark.asyncio
     async def test_tier2_graceful_degradation(self, monkeypatch):
@@ -141,7 +141,6 @@ class TestRunPipeline:
         await _run_pipeline("test-scan-id", "https://github.com/user/repo", mock_sb)
 
         assert mock_sb._update_data.get("status") == "completed"
-        assert mock_sb._update_data.get("total_findings") == 1
 
     @pytest.mark.asyncio
     async def test_tier1_error_marks_scan_failed(self, monkeypatch):

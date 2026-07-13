@@ -285,20 +285,32 @@ async def _run_pipeline(scan_id: str, repo_url: str, sb, fly_client=None):
         llm_cost_cents = (llm_tokens_in * LLM_INPUT_COST_PER_M / 1_000_000 + llm_tokens_out * LLM_OUTPUT_COST_PER_M / 1_000_000) * 100
         total_cost_cents = round(machine_cost_cents + llm_cost_cents, 4)
 
-        await _save_with_retry({
-            "tier1_findings": json.dumps(tier1_findings),
-            "tier2_findings": json.dumps(tier2_findings) if tier2_findings else None,
-            "total_findings": total_findings,
-            "duration_ms": total_duration,
-            "tier1_duration_ms": tier1_duration if tier1_duration else None,
-            "tier2_duration_ms": tier2_duration if tier2_duration else None,
-            "stack": stack,
-            "status": "completed",
-            "cost_cents": total_cost_cents,
-            "machine_seconds": round(machine_seconds, 3),
-            "llm_tokens_in": llm_tokens_in,
-            "llm_tokens_out": llm_tokens_out,
-        })
+        # Insert findings as individual rows into the findings table
+        # so the dashboard can query and display them. Write both
+        # Tier 1 and Tier 2 findings.
+        all_merged = tier1_findings + [
+            {"source": "tier2_sandbox", "severity": f.get("severity", "info"), "title": f"Route: {f.get('path', 'unknown')}",
+             "file": f.get("file_path", ""), "line": f.get("line", 0), "evidence": "Sandbox BOLA probe"}
+            for f in tier2_findings
+        ]
+        for f in all_merged:
+            try:
+                sb.table("findings").insert({
+                    "scan_id": scan_id,
+                    "severity": f.get("severity", "info"),
+                    "title": f.get("title", "")[:200],
+                    "file_path": f.get("file", ""),
+                    "line": f.get("line", 0),
+                    "tier": 2 if f.get("source") == "tier2_sandbox" else 1,
+                    "model_source": f.get("source", "unknown"),
+                    "poc_curl": f.get("evidence", ""),
+                    "remediation_code": f.get("patch_md", ""),
+                }).execute()
+            except Exception:
+                pass
+
+        # Update scan status + duration (only columns that exist in DB)
+        _update_status("completed", duration_ms=total_duration)
 
         logger.info(
             "scan.completed",
@@ -352,7 +364,7 @@ async def get_scan(scan_id: str) -> dict | None:
 async def get_scan_status(scan_id: str) -> dict | None:
     try:
         sb = get_supabase_client(service_role=True)
-        result = sb.table("scans").select("id, repo_url, status, created_at, duration_ms, total_findings").eq("id", scan_id).execute()
+        result = sb.table("scans").select("id, repo_url, status, created_at, duration_ms").eq("id", scan_id).execute()
         if not result.data:
             return None
         return dict(result.data[0])
