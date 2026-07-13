@@ -1859,6 +1859,20 @@ print(f'Strix adapter: OK — returned {len(findings)} findings')
 "  # Expected: OK with findings count
 ```
 
+### Future — Stack Expansion (Post-Phase 2)
+
+Tasks to add stack coverage for repos that don't match the current 6-stack whitelist.
+Unblocks scanning repos like `hasnainzxc/dropin` (vanilla JS/HTML) and `vite` projects.
+
+| Task | Stack | Changes Required | Difficulty |
+|------|-------|-----------------|------------|
+| S1 | Vite | `detect_stack.py`: check `vite.config.*`; `containerize.py`: `vite preview`; `ast_parser.py`: Vite parser | Medium |
+| S2 | Vanilla HTML/JS | `detect_stack.py`: fallback when `index.html` + `package.json`; no sandbox (Tier 1 only) | Easy |
+| S3 | Python Monorepo | `detect_stack.py`: multi-stack detection; monorepo layout analysis | Medium |
+| S4 | Nuxt.js | `detect_stack.py`: check `nuxt.config.*` + `nuxt` dep; containerize Nuxt build | Medium |
+| S5 | Django | `detect_stack.py`: check `manage.py` + `settings.py`; containerize with gunicorn | Medium |
+| S6 | Generic Python | `detect_stack.py`: fallback for any Python project with `requirements.txt` | Easy |
+
 ### Final Checklist
 - [ ] Phase Gate conditions met before Phase 2 (verified in F4)
 - [ ] All "Must Have" features shipped (verified in F1)

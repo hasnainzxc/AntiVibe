@@ -7,6 +7,11 @@ Exposes:
   - GET  /scan/{id}/status  Scan status only
 """
 
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent / ".env")
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 

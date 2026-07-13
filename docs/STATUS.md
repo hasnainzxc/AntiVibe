@@ -1,81 +1,95 @@
 # AntiVibe — Current Status
 
-**Updated**: 2026-07-04
-**Git**: 2 commits on main (c08b2df Waves 1-2, b784d88 Wave 3 pt1)
+**Updated**: 2026-07-13
+**Git**: `main` — 20+ commits, pushed to [hasnainzxc/AntiVibe](https://github.com/hasnainzxc/AntiVibe)
 
-## Overall Progress
+## Phase 1: MVP Deploy — ✅ COMPLETE (9/9 tasks)
 
-| Wave | Tasks | Status | Tests | Commit |
-|------|-------|--------|-------|--------|
-| 1 — Infra | 8/8 | ✅ complete | 124 (total) | c08b2df |
-| 2 — Tier 1 Static Engine | 7/7 | ✅ complete | — | c08b2df |
-| 3 — Tier 2 Sandbox | 5/7 | 🔄 in progress | 84 sandbox | b784d88 |
-| 4 — Tier 3 Fuzz Agent | 0/7 | ⏳ not started | — | — |
-| 5 — Reports + GitHub + Dashboard | 0/8 | ⏳ not started | — | — |
-| 6 — Billing + Integration | 0/7 | ⏳ not started | — | — |
-| 7 — Fixtures + YC Demo | 0/6 | ⏳ not started | — | — |
-| FINAL — Review + QA | 0/4 | ⏳ not started | — | — |
-
-**Total**: 22/50 implementation tasks done (44%), 0/4 review tasks
-
-## Wave 3 Detail
-
-| Task | Status | Tests |
+| Task | Status | Notes |
 |------|--------|-------|
-| 16 App containerizer | ✅ | 14 |
-| 17 Mock DB seeder | ✅ | 10 |
-| 18 Sandbox spin-up | ✅ | 30 |
-| 19 Route mapper | ✅ | 12 |
-| 20 JWT forge | ✅ | 18 |
-| 21 Health monitor | 🔄 in progress | — |
-| 22 Tier 2 orchestrator | ⏳ pending | — |
+| T1 — Supabase setup | ✅ Done | Project `chefyaeapjlfhrjeemjc`, 9 tables, RLS verified |
+| T2 — Fly.io config | ✅ Done | Config written, local-first (Fly deploy deferred — credit card gate) |
+| T3 — Anthropic key | ✅ Done | Key provisioned, LLM extractor wired |
+| T4 — sandbox-svc deploy | ✅ Done | Docker local mode, FastAPI on :8080 |
+| T5 — E2E pipeline | ✅ Done | GitHub URL → Tier 1 → Tier 2 → findings in Supabase |
+| T6 — Dashboard views | ✅ Done | Scan list + finding detail + real-time scan tracker UI |
+| T7 — Circuit-breaker | ✅ Done | $0.50/scan, 10min timeout, cost tracking |
+| T8 — Real scan testing | ✅ Done | 3 fixture repos tested, findings verified |
+| T9 — Landing page | ✅ Done | Fly.io 1:1 design, alternating layout, illustrations |
 
-## Completed Modules
+### What Shipped
 
-### Wave 1 — Infrastructure
-- Next.js 16 App Router dashboard (shadcn/ui, Tailwind)
-- pnpm monorepo (apps/dashboard, packages/shared-types, services/sandbox-svc)
-- Supabase schema (9 tables with RLS) + TS/Python clients
-- Fly Machines async Python client (create/wait/destroy/list, auto-destroy)
-- Supabase Storage client (TS + Python, private buckets)
-- Rate limiter middleware (1 scan/hr/IP) + email verification gate
-- GH Actions CI (Node 20 + Python 3.12, lint+test+build)
-- Vitest workspace + Playwright + ESLint flat config + Ruff
+**Dashboard UI (apps/dashboard/):**
+- Fly.io 1:1 landing page — floating pill navbar, full-bleed hero, alternating two-column feature sections, enterprise section with real illustrations
+- Scan tracker — horizontal stage progress bar (queued → cloning → tier1 → tier2 → completed/failed), terminal-style log viewer with per-stage messages, severity summary chips, findings grid with severity badges
+- Finding cards — severity badge (critical/high/medium/low/info), file path + line, description, PoC curl, suggested fix
+- Full footer with Company/Resources/Legal columns
 
-### Wave 2 — Tier 1 Static Engine
-- Secure repo cloner (shallow, LFS blocked, 500MB cap, postinstall blocked)
-- Stack detector (6-stack heuristic whitelist)
-- AST parser (per-stack route extraction + env-var scanning)
-- Secret detector (provider patterns + Shannon entropy ≥3.5, FP controls)
-- Config-flaw analyzer (Firestore rules AST, CORS wildcard, IAM broad-policy)
-- LLM extractor (Anthropic client with 14-pattern secret sanitization)
-- Tier 1 orchestrator (clone → detect → AST → parallel analyzers → merge, 60s circuit-breaker)
+**Scan Pipeline (services/sandbox-svc/):**
+- Tier 1 — Stack detector (6 stacks), AST parser, secret detector (providers + entropy), config flaw analyzer (Firestore, CORS, IAM), LLM extractor (Anthropic)
+- Tier 2 — Docker containerizer, DB seeder (2 tenants, 5 mock users), JWT forge (5 adapter registry), route mapper
+- 415 Python tests, 12 TypeScript tests
 
-### Wave 3 — Tier 2 Sandbox (so far)
-- 6-stack Dockerfile generator (never writes to user repo)
-- Mock DB seeder (2 tenants × 5 users, cross-tenant BOLA schema)
-- Sandbox spin-up (Fly Machine, iptables egress DENY ALL, auto-destroy)
-- Route mapper (auth_required inference per 5 stacks)
-- JWT forge (5 adapter registry: nextauth/clerk/firebase/supabase/custom)
+## Phase 2: Strix Integration — ⏳ GATED
+
+Requires:
+- [ ] Fly.io deploy with real domain + SSL
+- [ ] 48+ hours zero errors in production logs
+- [ ] At least 1 real user feedback collected
+- [ ] User docs written
+
+## Current State
+
+### Running Services
+
+| Service | Port | Status |
+|---------|------|--------|
+| Dashboard (Next.js) | :3000 | Running (dev) |
+| Sandbox-svc (FastAPI) | :8080 | Running (dev) |
+
+### Key Commands
+
+```bash
+# Start both services
+cd services/sandbox-svc && uvicorn main:app --port 8080 --reload
+cd apps/dashboard && pnpm dev
+
+# Build
+pnpm -r build
+
+# Tests
+cd services/sandbox-svc && python -m pytest tests/ -q
+cd .. && pnpm -r test
+
+# Scan a repo
+curl -X POST http://localhost:8080/scan \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url":"https://github.com/owner/repo"}'
+```
+
+### Known Issues
+
+- **No Stripe keys** → payment routes crash (need STRIPE_SECRET_KEY guard)
+- **No Anthropic key in dev profile** → LLM extractor degrades gracefully
+- **Vite/vanilla JS repos unsupported** → need stack detector update
+- **Fly.io deploy blocked** → credit card needed for free tier
+- **`fixtures/*` repos** → local dirs only, need GitHub mirrors for scan URL validation
+
+### Tests
+
+```
+415 Python tests (pytest)    │  12 TypeScript tests (vitest)  │  Build (tsc)
+─────────────────────────────┼────────────────────────────────┼────────────
+scanner/       105 tests     │  dashboard/        12 tests     │  dashboard ✓
+sandbox/       310 tests     │  shared-types/     0  tests     │  shared-types ✓
+                                                                        
+Total: 427 tests, all passing                                          
+```
 
 ## Next Up
 
-Ordered by dependency:
-1. Task 21 — Sandbox health monitor (boot detect + crash recovery)
-2. Task 22 — Tier 2 orchestrator (chains containerize→seed→spin→forge)
-3. Wave 4 — Tier 3 Fuzz Agent (route walker, BOLA tester, no-stop pivot engine)
-4. Wave 5 — Reporting + GitHub + Dashboard (auto-PR writer, GitHub OAuth, webhook handler)
-5. Wave 6 — Billing + Integration (Stripe, circuit-breaker, cost tracker, E2E)
-6. Wave 7 — Fixtures + YC demo (vuln fixtures, benchmark runner, Playwright, demo recording)
-7. FINAL — Review + QA (plan audit, code quality, manual QA, scope check)
-
-## Need Revisiting
-
-- [ ] Per-feature doc template compliance: some docs exceed 800-word cap
-- [ ] Supabase project: NOT provisioned yet (migration exists, no deployed instance)
-- [ ] Stripe integration: NOT configured (Stripe secret key not added to env)
-- [ ] GitHub OAuth App: NOT registered
-- [ ] Fly.io account: API token needed before real sandbox spin-up
-- [ ] Anthropic API key: needed for LLM extractor real calls (mocked in tests)
-- [ ] Together/Anyscale API key: needed for OSS inference in Wave 4
-- [ ] Playwright E2E: config exists, no test scenarios written yet
+1. **Stack expansion** — Add Vite, generic HTML/JS, Python monorepo to supported stacks
+2. **Fly.io deploy** — Provision credit card, deploy dashboard + sandbox-svc
+3. **Phase 2 Strix** — Wire Strix fuzzer adapter (T10-T22, gated)
+4. **User feedback** — Collect first user feedback to unlock Phase 2
+5. **CI/CD polish** — GitHub Actions, auto-deploy, staging env

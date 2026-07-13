@@ -65,6 +65,21 @@ AntiVibe/
 
 ---
 
+## Services Architecture
+
+AntiVibe runs **two services** locally:
+
+| Service | Location | Port | Tech | Purpose |
+|---------|----------|------|------|---------|
+| **Dashboard** | `apps/dashboard/` | `:3000` | Next.js 16 | UI: landing page, scan form, progress tracker, findings display |
+| **Sandbox-svc** | `services/sandbox-svc/` | `:8080` | Python 3.12 + FastAPI | Scan pipeline: clone, detect, analyze, sandbox, fuzz |
+
+The dashboard proxies scan requests to sandbox-svc:
+- `POST /api/scan` → `POST /scan` on sandbox-svc
+- `GET /api/scan?scan_id=X` → `GET /scan/{id}/status` on sandbox-svc
+
+---
+
 ## Quick Start (Local MVP)
 
 Run the full AntiVibe pipeline locally — no Fly.io, no cloud deploy.
@@ -73,14 +88,15 @@ Run the full AntiVibe pipeline locally — no Fly.io, no cloud deploy.
 
 - Node.js ≥ 20 + pnpm (`corepack enable`)
 - Python ≥ 3.12
-- Docker (for sandbox containers)
+- Docker (for sandbox containers in local mode)
 - Supabase project (free tier) — [create one](https://supabase.com/dashboard)
+  - Copy your Project URL, anon key, and service-role key from **Settings → API**
 - Git
 
 ### 1. Install
 
 ```bash
-git clone https://github.com/<org>/AntiVibe
+git clone https://github.com/hasnainzxc/AntiVibe
 cd AntiVibe
 
 # Node deps
@@ -95,72 +111,56 @@ cd ../..
 ### 2. Environment
 
 ```bash
+# Dashboard
 cp apps/dashboard/.env.example apps/dashboard/.env.local
+# Edit with: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+
+# Sandbox service
 cp services/sandbox-svc/.env.example services/sandbox-svc/.env
-# Edit .env files with your Supabase URL, anon key, service-role key
+# Edit with: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
 ```
 
-Leave `FLY_API_TOKEN` unset in `services/sandbox-svc/.env` — the service auto-detects local mode and uses Docker instead of Fly Machines.
+> **Note**: sandbox-svc auto-loads `.env` via `python-dotenv` on startup. Leave `FLY_API_TOKEN` unset — local mode uses Docker instead.
 
-### 3. Run
+### 3. Start Services
 
+**Terminal 1 — Sandbox-svc (Python backend):**
 ```bash
-bash scripts/dev-start.sh
+cd services/sandbox-svc
+python -m uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+# Verifies: curl http://localhost:8080/health → {"status":"ok"}
 ```
 
-This starts:
-- **sandbox-svc** on [:8080](http://localhost:8080) — FastAPI scan service
-- **Dashboard** on [:3000](http://localhost:3000) — Next.js UI
-
-Stop with:
+**Terminal 2 — Dashboard (Next.js UI):**
 ```bash
-bash scripts/dev-stop.sh
+cd apps/dashboard
+pnpm dev
+# Opens: http://localhost:3000
 ```
 
 ### 4. Scan a repo
 
+Via the UI:
+1. Open http://localhost:3000
+2. Paste a GitHub URL: `https://github.com/hasnainzxc/vuln-nextjs`
+3. Click "Scan your repo"
+4. Watch the scan progress tracker with real-time terminal log
+
+Via curl:
 ```bash
-curl -X POST http://localhost:8080/scan \
+curl -X POST http://localhost:3000/api/scan \
   -H "Content-Type: application/json" \
   -d '{"repo_url":"https://github.com/owner/repo"}'
-
-# Returns scan ID — poll status:
-curl http://localhost:8080/scan/<scan_id>/status
-```
-
-Or scan a local fixture:
-```bash
-curl -X POST http://localhost:8080/scan \
-  -H "Content-Type: application/json" \
-  -d '{"repo_url":"file:///absolute/path/to/fixtures/vuln-nextjs"}'
 ```
 
 ### 5. Tests
 
 ```bash
+# Python (415 tests)
 cd services/sandbox-svc && python -m pytest tests/ -v
+
+# TypeScript (12 tests)
 cd ../.. && pnpm -r test
-```
-
----
-
-## Testing
-
-```
-415 Python tests (pytest)    │  12 TypeScript tests (vitest)  │  Build (tsc)
-─────────────────────────────┼────────────────────────────────┼────────────
-scanner/       105 tests     │  dashboard/        12 tests    │  dashboard ✓
-sandbox/       310 tests     │  shared-types/     0  tests    │  shared-types ✓
-                                                                        
-Total: 427 tests, all passing                                          
-```
-
-```bash
-# Python
-cd services/sandbox-svc && python -m pytest tests/ -v   # 415 tests
-
-# TypeScript
-pnpm -r test -- --reporter=verbose                        # 12 tests
 
 # Full CI pipeline
 pnpm -r build && pnpm -r test && cd services/sandbox-svc && python -m pytest tests/ -v
@@ -168,132 +168,87 @@ pnpm -r build && pnpm -r test && cd services/sandbox-svc && python -m pytest tes
 
 ---
 
+## Supported Stacks
+
+The scanner detects which framework a project uses and tailors its analyzers. Currently supports **6 stacks**:
+
+| Stack | Detected By | Tier 2 Sandbox | Dockerfile |
+|-------|-------------|---------------|------------|
+| Next.js | `next.config.*`, `next/` in deps | ✅ Spins up, forges JWT, maps routes | `node:20-alpine` |
+| Express | `express` in deps, `app.listen` | ✅ Spins up, forges JWT, maps routes | `node:20-alpine` |
+| Firebase | `firebase.json` + `functions/` | ❌ (no sandbox) | — |
+| FastAPI | `main.py` with `FastAPI()` | ❌ (Tier 1 only) | — |
+| Flask | `app.py` with `Flask()` | ❌ (Tier 1 only) | — |
+| SvelteKit | `svelte.config.*`, `@sveltejs` in deps | ❌ (Tier 1 only) | — |
+
+Stacks without Tier 2 sandbox support still get full Tier 1 analysis (AST + secrets + config + LLM).
+
+### Future Stacks (Planned)
+
+| Stack | Priority | Notes |
+|-------|----------|-------|
+| **Vite / Vanilla JS** | High | Detected via `vite.config.*`; sandbox with `vite preview` |
+| **Generic HTML/JS** | Medium | No framework, flat file analysis + template injection scan |
+| **Python monorepo** | Medium | Multi-stack detection in monorepo layouts |
+| **Nuxt.js** | Low | Vue-based Next.js alternative |
+| **Remix** | Low | React Router-based framework |
+| **Django** | Low | Python full-stack framework |
+| **Spring Boot** | Low | Java/JVM-based (requires JDK sandbox) |
+
+---
+
 ## Infrastructure Setup
 
-AntiVibe uses Supabase for Postgres, auth, and RLS. Before running the app, provision a Supabase project.
+### Supabase
 
-### Prerequisites
-
-1. Create a free Supabase project at [supabase.com/dashboard](https://supabase.com/dashboard)
-2. From **Settings → API**, copy:
-   - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_URL`
-   - **anon public** key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role** key → `SUPABASE_SERVICE_ROLE_KEY`
-3. Install the PostgreSQL client (`psql`) — required by the setup script
-
-### Provision Schema
+AntiVibe uses Supabase for Postgres, auth, and RLS.
 
 ```bash
 cp env.template apps/dashboard/.env.local
-# Edit .env.local with real values from your Supabase project
+# Edit with real values from your Supabase project
 
 SUPABASE_URL=https://<ref>.supabase.co \
 SUPABASE_SERVICE_ROLE_KEY=eyJ... \
 bash scripts/supabase-setup.sh
 ```
 
-This script:
-- Validates env vars are present
-- Applies `migrations/0001_init.sql` (9 tables: users, scans, findings, reports, oauth_tokens, webhook_deliveries, subscriptions, scan_usage, sandbox_egress_log)
-- Verifies all 9 tables exist after migration
-- Exits with code 1 on any failure
+This script applies `migrations/0001_init.sql` (9 tables) and verifies all exist.
 
-### Verify RLS Policies
+### Supabase Storage
 
-```bash
-SUPABASE_URL=https://<ref>.supabase.co \
-SUPABASE_ANON_KEY=eyJ... \
-SUPABASE_SERVICE_ROLE_KEY=eyJ... \
-bash scripts/verify-supabase-rls.sh
-```
-
-This script runs 3 curl-based tests against the Supabase REST API:
-1. Unauthenticated read on `scans` — expects empty array
-2. Service-role insert — expects 201 Created
-3. Anon user trying to read another user's scan — expects empty array (RLS blocks it)
-
-### Deploy Dashboard to Fly.io
-
-AntiVibe's dashboard is deployed to [Fly.io](https://fly.io) as a standalone Next.js app.
-
-#### Prerequisites
-
-1. Install the Fly CLI:
-   ```bash
-   curl -L https://fly.io/install.sh | sh
-   export FLYCTL_INSTALL="$HOME/.fly"
-   export PATH="$FLYCTL_INSTALL/bin:$PATH"
-   ```
-2. Sign up / log in:
-   ```bash
-   flyctl auth signup  # Create a Fly.io account (free tier available)
-   # or
-   flyctl auth login   # Log in to existing account
-   ```
-
-#### Deploy
-
-```bash
-# From the repo root
-flyctl launch --from-file apps/dashboard/fly.toml --no-deploy
-
-# Set secrets (use your Supabase project values)
-flyctl secrets set \
-  SUPABASE_URL="https://<ref>.supabase.co" \
-  SUPABASE_ANON_KEY="<your-anon-key>" \
-  SUPABASE_SERVICE_ROLE_KEY="<your-service-role-key>" \
-  NODE_ENV="production"
-
-# Deploy
-flyctl deploy --config apps/dashboard/fly.toml
-
-# Open in browser
-flyctl open
-```
-
-> **Note**: The Fly app name `antivibe-dashboard` must be globally unique. If taken, change the `app` field in `apps/dashboard/fly.toml`.
-
-#### Dashboard URL
-
-Once deployed, the dashboard is available at `https://antivibe-dashboard.fly.dev`.
-
----
-
-### Storage Buckets
-
-After schema setup, create these private buckets in **Supabase Dashboard → Storage**:
+Create these private buckets via **Supabase Dashboard → Storage**:
 
 | Bucket | Visibility | Purpose |
 |--------|-----------|---------|
 | `scan-artifacts` | Private | Per-scan output artifacts |
 | `poc-captures` | Private | Encrypted PoC screenshots / captures |
 
+### Fly.io Deploy (Production)
+
+```bash
+flyctl launch --from-file apps/dashboard/fly.toml --no-deploy
+
+flyctl secrets set \
+  SUPABASE_URL="https://<ref>.supabase.co" \
+  SUPABASE_ANON_KEY="<anon>" \
+  SUPABASE_SERVICE_ROLE_KEY="<service-role>" \
+  NODE_ENV="production"
+
+flyctl deploy --config apps/dashboard/fly.toml
+```
+
 ---
 
-## Docs
-
-Full documentation lives in `docs/`:
-
-| Doc | Covers |
-|-----|--------|
-| [architecture.md](docs/architecture.md) | System overview, component map, data flow |
-| [system-design.md](docs/system-design.md) | Design decisions, tradeoffs, scaling strategy |
-| [sprint-goals.md](docs/sprint-goals.md) | 20-week roadmap, sprint exit criteria |
-| [STATUS.md](docs/STATUS.md) | Current build status, completed modules, next up |
-| [features/](docs/features/) | Per-module specs (35 modules, 800-word cap each) |
-
----
-
-### Guardrails
+## Guardrails
 
 - **Cost**: $0.50/scan cap, 10min circuit-breaker, 30min Strix wall-clock timeout
 - **Sandbox egress**: DENY ALL except localhost, audit-logged
-- **Strix worker egress**: ALLOW Anthropic API + target only (all other blocked)
+- **Strix worker egress**: ALLOW Anthropic API + target only
 - **Clone safety**: shallow `--depth 1`, no LFS, 500MB cap, postinstall blocked
 - **Auto-PR**: never auto-merged — human review mandatory
 - **Secrets**: stripped from LLM input before API call; Strix PoCs encrypted at rest
 - **Rate limit**: 1 scan/hour/IP on free tier
-- **Strix**: v1 standard mode only (not deep); single Anthropic model; version pinned; Apache-2.0 NOTICE
+- **Strix**: v1 standard mode only; single Anthropic model; version pinned; Apache-2.0 NOTICE
 
 ---
 
@@ -303,19 +258,14 @@ Full documentation lives in `docs/`:
 
 | Phase | Tasks | Status |
 |-------|-------|--------|
-| 1 — MVP Deploy | T1-T9 | **8/9 done** (T8 blocked on infra) |
-| 2 — Strix Integration | T10-T22 | GATED (requires Phase 1 polished) |
+| 1 — MVP Deploy | T1-T9 | **9/9 done** ✅ |
+| 2 — Strix Integration | T10-T22 | GATED (requires Phase 1 polish + deploy) |
+| Future — Stack Expansion | — | Planned: Vite, Vanilla JS, Nuxt, Django |
 | FINAL — Review | F1-F4 | Pending |
 
-**Tasks complete**: T1 (Supabase setup), T2 (Fly.io config), T3 (Anthropic key), T4 (sandbox-svc deploy prep), T5 (E2E pipeline), T6 (Dashboard views), T7 (Circuit-breaker + cost tracking), T9 (Landing page + Stripe)
+**Complete**: T1 (Supabase), T2 (Fly.io), T3 (Anthropic key), T4 (sandbox-svc deploy prep), T5 (E2E pipeline), T6 (Dashboard views + scan tracker UI), T7 (Circuit-breaker), T8 (Real scan testing), T9 (Fly.io 1:1 landing page + scan UI)
 
-**427 tests (415 Python + 12 TypeScript), 14 git commits. Pushed to [hasnainzxc/AntiVibe](https://github.com/hasnainzxc/AntiVibe).**
-
-### To Deploy
-1. Provision Supabase + Fly.io + Anthropic accounts
-2. `fly deploy` dashboard + sandbox-svc
-3. Run `scripts/supabase-setup.sh` + `scripts/verify-supabase-rls.sh`
-4. Scan 3 fixture repos in `fixtures/`
+**427 tests (415 Python + 12 TypeScript). Pushed to [hasnainzxc/AntiVibe](https://github.com/hasnainzxc/AntiVibe).**
 
 ---
 
